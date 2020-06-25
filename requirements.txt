@@ -1,5 +1,6 @@
 aiodns
 aiohttp
+ansible
 fastapi
 prometheus_client
 uvicorn
