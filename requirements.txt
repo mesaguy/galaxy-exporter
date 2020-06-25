@@ -1,4 +1,5 @@
 aiodns
 aiohttp
 fastapi
+prometheus_client
 uvicorn
