@@ -11,7 +11,6 @@ VERSION = `python -c 'import galaxy_exporter; print(galaxy_exporter.__version__)
 build:
 	docker build --pull \
 		--build-arg PYTHON_VERSION=${PYTHON_VERSION} \
-		--build-arg SOURCE_COMMIT=`git rev-parse --short HEAD` \
 		--pull \
 		--tag ${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:latest \
 		--tag ${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:${BUILD_DATE} \
