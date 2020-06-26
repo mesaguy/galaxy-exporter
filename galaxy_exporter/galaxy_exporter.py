@@ -173,7 +173,7 @@ class GalaxyData:
                 registry=self.registry),
             quality_score=Gauge(f'{metric_prefix}_quality_score', 'Quality score', \
                 labels, registry=self.registry),
-            version=Info(f'{metric_prefix}_version', 'Current release version',
+            version=Info(f'{metric_prefix}_version', 'Current release version', \
                 registry=self.registry),
             versions=Gauge(f'{metric_prefix}_versions', 'Version count', \
                 labels, registry=self.registry),
@@ -195,7 +195,7 @@ class GalaxyData:
         return RE_SAFE.sub('_', self.full_name())
 
     async def update(self):
-        fastapi_logger.info('Fetching %s "%s" metadata',
+        fastapi_logger.info('Fetching %s "%s" metadata', \
             self.__class__.__name__, self.full_name())
         # Ensure no two lookups occur at the same time
         async with asyncio.Lock():
@@ -322,7 +322,7 @@ async def process_metrics():
     return generate_latest()
 
 @app.get('/collection/{collection_name}', response_class=HTMLResponse)
-async def role_base(collection_name: str):
+async def collection_base(collection_name: str):
     """ Generate collection base HTML page
     """
     return COLLECTION_HTML.format(collection_name=collection_name)
@@ -373,10 +373,12 @@ async def collection_versions(collection_name: str):
     return collection.versions()
 
 @app.get("/collection/{collection_name}/metrics", response_class=PlainTextResponse)
-async def metrics(collection_name: str):
+async def collection_metrics(collection_name: str):
     collection = await get_collection(collection_name)
-    collection.metrics['community_score'].labels(collection_name).set(collection.community_score())
-    collection.metrics['community_survey'].labels(collection_name).set(collection.community_surveys())
+    collection.metrics['community_score'].labels(collection_name)\
+        .set(collection.community_score())
+    collection.metrics['community_survey'].labels(collection_name)\
+        .set(collection.community_surveys())
     collection.metrics['created'].labels(collection_name).set(collection.created_epoch())
     collection.metrics['dependency'].labels(collection_name).set(collection.dependencies())
     collection.metrics['download'].labels(collection_name).set(collection.downloads())
@@ -463,7 +465,7 @@ async def role_versions(role_name: str):
     return role.versions()
 
 @app.get("/role/{role_name}/metrics", response_class=PlainTextResponse)
-async def metrics(role_name: str):
+async def role_metrics(role_name: str):
     role = await get_role(role_name)
     role.metrics['community_score'].labels(role_name).set(role.community_score())
     role.metrics['community_survey'].labels(role_name).set(role.community_surveys())
