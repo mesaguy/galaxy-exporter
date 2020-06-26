@@ -1,124 +1,191 @@
-# Alpine based Ansible Galaxy Role statistics collector
+# Alpine based Prometheus exporter of Ansible Galaxy metrics
 
-[![DockerHub Badge](http://dockeri.co/image/mesaguy/ansible_galaxy_role_stats)](https://hub.docker.com/r/mesaguy/ansible_galaxy_role_stats)
+[![DockerHub Badge](http://dockeri.co/image/mesaguy/galaxy-exporter)](https://hub.docker.com/r/mesaguy/galaxy-exporter)
 
 ## Introduction
 
-This container image collects Ansible Galaxy statistics for a role and makes the statistics available via HTTP for Prometheus and very simple collectors.
+This container image collects Ansible Galaxy metrics and makes the metrics available via HTTP for Prometheus and very simple collectors.
 
 Runs on port 8000/tcp as the user 'nobody' and daemon logs are send to stdout.
 
 ## Usage
 
-The most basic usage is the following, which monitors the [mesaguy.prometheus](https://github.com/mesaguy/ansible-prometheus) role's statistics:
+### Basic install
 
-    docker run --rm -p 8000:8000 -it mesaguy/ansible_galaxy_role_stats
+Clone the python code:
 
-To monitor a different role, first identify the role's Ansible Galaxy role ID number. For example, the *mesaguy.prometheus* role ID is *29232*:
+    git clone https://github.com/mesaguy/galaxy_exporter.git
 
-    ansible-galaxy info mesaguy.prometheus
+Install:
 
-Or
+    cd galaxy_exporter
+    ./setup.py install
 
-    ansible-galaxy info dev-sec.ssh-hardening
+The application can be run locally via:
 
-Example that monitors the *dev-sec.ssh-hardening* role metrics:
+    uvicorn galaxy_exporter.galaxy_exporter:app --reload
 
-    docker run -it -e ANSIBLE_ROLE_ID=10533 -e ANSIBLE_ROLE_NAME=dev-sec.ssh-hardening -p 8000:8000 mesaguy/ansible_galaxy_role_stats
+### Docker
 
-By default, all Ansible Galaxy results are cached for 5 minutes to ensure Ansible Galaxy isn't polled excessively. This value can be changed with the ```CACHE_SECONDS``` environmental variable.
+The most basic usage is the following, which starts the exporter:
 
-## Metrics
+    docker run --rm -p 8000:8000 -it mesaguy/galaxy-exporter
 
-A ```curl localhost:8000``` returns:
+By default, all Ansible Galaxy results are cached for 15 seconds to ensure Ansible Galaxy isn't polled excessively. This value can be changed with the ```CACHE_SECONDS``` environmental variable. Setting the cache value to ```0``` disables caching completely.
+
+## Ansible role metrics
+
+A ```curl localhost:8000/role/dev-sec.ssh-hardening``` returns:
 
     <html>
         <head>
-            <title>dev-sec.ssh-hardening Index</title>
+            <title>Ansible Galaxy role dev-sec.ssh-hardening statistics index</title>
         </head>
         <body>
             <p>
-                <a href="/metrics">Prometheus Metrics</a>
+                <a href="/role/dev-sec.ssh-hardening/metrics">Prometheus Metrics for dev-sec.ssh-hardening</a>
             </p>
             <p>
                 Simple metrics for dev-sec.ssh-hardening
                 <ul>
-                    <li>Raw <a href="/created">Created </a> epoch format datetime</li>
-                    <li>Raw <a href="/downloads">Download </a> count integer</li>
-                    <li>Raw <a href="/forks">Forks </a> count integer</li>
-                    <li>Raw <a href="/modified">Modified </a> epoch format datetime</li>
-                    <li>Raw <a href="/open_issues">Open Issues </a> count integer</li>
-                    <li>Raw <a href="/stars">Star </a> count integer</li>
-                    <li>Raw <a href="/versions">Versions </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/community_score">Community score </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/community_surveys">Community surveys</a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/created">Created </a> epoch format datetime</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/dependencies">Dependencies </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/downloads">Download </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/forks">Forks </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/imported">Imported </a> epoch format datetime</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/modified">Modified </a> epoch format datetime</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/open_issues">Open Issues </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/platforms">Platforms </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/quality_score">Quality score </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/stars">Star </a> count integer</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/version">Version </a> current version</li>
+                    <li>Raw <a href="/role/dev-sec.ssh-hardening/versions">Versions </a> count integer</li>
                 </ul>
             </p>
         </body>
     </html>
 
-Prometheus formatted metrics are located at ```/metrics``` and all other metrics are available on their own URL
+To gather just the star count, ```curl localhost:8000/role/dev-sec.ssh-hardening/stars``` returns ```663```. Note that the result has no trailing newline. These simple metrics are useful for polling from simple devices like Arduinos.
 
-For instance to gather just the star count, ```curl localhost:8000/stars``` returns ```663```. Note that the result has no trailing newline. These simple metrics are useful for polling from simple devices like Arduinos.
-
-### Prometheus
+### Prometheus role metrics
 
 All Ansible Galaxy metrics are prefixed with ```ansible_galaxy_role```, then have the role's name with all ```.``` and ```-``` characters converted to underscores, then the type of collected data is specified (ie: _stars).
 
-Example Prometheus metrics from running ```curl localhost:8000/metrics```:
+Example Prometheus role metrics from running ```curl localhost:8000/role/dev-sec.ssh-hardening/metrics```:
 
-    # HELP python_gc_objects_collected_total Objects collected during gc
-    # TYPE python_gc_objects_collected_total counter
-    python_gc_objects_collected_total{generation="0"} 6212.0
-    python_gc_objects_collected_total{generation="1"} 321.0
-    python_gc_objects_collected_total{generation="2"} 0.0
-    # HELP python_gc_objects_uncollectable_total Uncollectable object found during GC
-    # TYPE python_gc_objects_uncollectable_total counter
-    python_gc_objects_uncollectable_total{generation="0"} 0.0
-    python_gc_objects_uncollectable_total{generation="1"} 0.0
-    python_gc_objects_uncollectable_total{generation="2"} 0.0
-    # HELP python_gc_collections_total Number of times this generation was collected
-    # TYPE python_gc_collections_total counter
-    python_gc_collections_total{generation="0"} 99.0
-    python_gc_collections_total{generation="1"} 8.0
-    python_gc_collections_total{generation="2"} 0.0
-    # HELP python_info Python platform information
-    # TYPE python_info gauge
-    python_info{implementation="CPython",major="3",minor="8",patchlevel="3",version="3.8.3"} 1.0
-    # HELP process_virtual_memory_bytes Virtual memory size in bytes.
-    # TYPE process_virtual_memory_bytes gauge
-    process_virtual_memory_bytes 7.2306688e+07
-    # HELP process_resident_memory_bytes Resident memory size in bytes.
-    # TYPE process_resident_memory_bytes gauge
-    process_resident_memory_bytes 3.6446208e+07
-    # HELP process_start_time_seconds Start time of the process since unix epoch in seconds.
-    # TYPE process_start_time_seconds gauge
-    process_start_time_seconds 1.59286511727e+09
-    # HELP process_cpu_seconds_total Total user and system CPU time spent in seconds.
-    # TYPE process_cpu_seconds_total counter
-    process_cpu_seconds_total 1.2
-    # HELP process_open_fds Number of open file descriptors.
-    # TYPE process_open_fds gauge
-    process_open_fds 16.0
-    # HELP process_max_fds Maximum number of open file descriptors.
-    # TYPE process_max_fds gauge
-    process_max_fds 1.048576e+06
     # HELP ansible_galaxy_role_dev_sec_ssh_hardening_created Created datetime in epoch format
     # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_created gauge
-    ansible_galaxy_role_dev_sec_ssh_hardening_created{ansible_role_id="10533",ansible_role_name="dev-sec.ssh-hardening"} 1.466782044e+09
+    ansible_galaxy_role_dev_sec_ssh_hardening_created{role_name="dev-sec.ssh-hardening"} 1.466782044e+09
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_community_score Community score
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_community_score gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_community_score{role_name="dev-sec.ssh-hardening"} 5.0
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_community_surveys Community surveys
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_community_surveys gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_community_surveys{role_name="dev-sec.ssh-hardening"} 1.0
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_dependencies Dependency count
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_dependencies gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_dependencies{role_name="dev-sec.ssh-hardening"} 0.0
     # HELP ansible_galaxy_role_dev_sec_ssh_hardening_downloads Download count
     # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_downloads gauge
-    ansible_galaxy_role_dev_sec_ssh_hardening_downloads{ansible_role_id="10533",ansible_role_name="dev-sec.ssh-hardening"} 378666.0
-    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_forks Fork count
-    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_forks gauge
-    ansible_galaxy_role_dev_sec_ssh_hardening_forks{ansible_role_id="10533",ansible_role_name="dev-sec.ssh-hardening"} 190.0
+    ansible_galaxy_role_dev_sec_ssh_hardening_downloads{role_name="dev-sec.ssh-hardening"} 382509.0
     # HELP ansible_galaxy_role_dev_sec_ssh_hardening_modified Modified datetime in epoch format
     # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_modified gauge
-    ansible_galaxy_role_dev_sec_ssh_hardening_modified{ansible_role_id="10533",ansible_role_name="dev-sec.ssh-hardening"} 1.592851307e+09
-    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_open_issues Open Issues count
-    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_open_issues gauge
-    ansible_galaxy_role_dev_sec_ssh_hardening_open_issues{ansible_role_id="10533",ansible_role_name="dev-sec.ssh-hardening"} 10.0
-    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_stars Stars count
-    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_stars gauge
-    ansible_galaxy_role_dev_sec_ssh_hardening_stars{ansible_role_id="10533",ansible_role_name="dev-sec.ssh-hardening"} 663.0
+    ansible_galaxy_role_dev_sec_ssh_hardening_modified{role_name="dev-sec.ssh-hardening"} 1.593090008e+09
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_quality_score Quality score
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_quality_score gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_quality_score{role_name="dev-sec.ssh-hardening"} 4.75
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_version_info Current release version
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_version_info gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_version_info{version="9.2.0"} 1.0
     # HELP ansible_galaxy_role_dev_sec_ssh_hardening_versions Version count
     # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_versions gauge
-    ansible_galaxy_role_dev_sec_ssh_hardening_versions{ansible_role_id="10533",ansible_role_name="dev-sec.ssh-hardening"} 31.0
+    ansible_galaxy_role_dev_sec_ssh_hardening_versions{role_name="dev-sec.ssh-hardening"} 32.0
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_forks Fork count
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_forks gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_forks{role_name="dev-sec.ssh-hardening"} 190.0
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_imported Imported datetime in epoch format
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_imported gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_imported{role_name="dev-sec.ssh-hardening"} 1.593075608e+09
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_platforms Platform count
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_platforms gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_platforms{role_name="dev-sec.ssh-hardening"} 38.0
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_open_issues Open Issues count
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_open_issues gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_open_issues{role_name="dev-sec.ssh-hardening"} 9.0
+    # HELP ansible_galaxy_role_dev_sec_ssh_hardening_stars Stars count
+    # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_stars gauge
+    ansible_galaxy_role_dev_sec_ssh_hardening_stars{role_name="dev-sec.ssh-hardening"} 665.0
+
+## Ansible collection metrics
+
+A ```curl localhost:8000/collection/community.kubernetes``` returns:
+
+    <html>
+        <head>
+            <title>Ansible Galaxy collection community.kubernetes statistics index</title>
+        </head>
+        <body>
+            <p>
+                <a href="/collection/community.kubernetes/metrics">Prometheus Metrics for community.kubernetes</a>
+            </p>
+            <p>
+                Simple metrics for community.kubernetes
+                <ul>
+                    <li>Raw <a href="/collection/community.kubernetes/community_score">Community score </a> count integer</li>
+                    <li>Raw <a href="/collection/community.kubernetes/community_surveys">Community surveys</a> count integer</li>
+                    <li>Raw <a href="/collection/community.kubernetes/created">Created </a> epoch format datetime</li>
+                    <li>Raw <a href="/collection/community.kubernetes/dependencies">Dependencies </a> count integer</li>
+                    <li>Raw <a href="/collection/community.kubernetes/downloads">Download </a> count integer</li>
+                    <li>Raw <a href="/collection/community.kubernetes/modified">Modified </a> epoch format datetime</li>
+                    <li>Raw <a href="/collection/community.kubernetes/quality_score">Quality score </a> count integer</li>
+                    <li>Raw <a href="/collection/community.kubernetes/version">Version </a> current version</li>
+                    <li>Raw <a href="/collection/community.kubernetes/versions">Versions </a> count integer</li>
+                </ul>
+            </p>
+        </body>
+    </html>
+
+### Prometheus collection metrics
+
+All Ansible Galaxy collection metrics are prefixed with ```ansible_galaxy_collection```, then have the collection's name with all ```.``` and ```-``` characters converted to underscores, then the type of collected data is specified (ie: _downloads).
+
+Example Prometheus metrics from running ```localhost:8000/collection/community.kubernetes/metrics```:
+
+    # HELP ansible_galaxy_collection_community_kubernetes_created Created datetime in epoch format
+    # TYPE ansible_galaxy_collection_community_kubernetes_created gauge
+    ansible_galaxy_collection_community_kubernetes_created{collection_name="community.kubernetes"} 1.58089728e+09
+    # HELP ansible_galaxy_collection_community_kubernetes_community_score Community score
+    # TYPE ansible_galaxy_collection_community_kubernetes_community_score gauge
+    ansible_galaxy_collection_community_kubernetes_community_score{collection_name="community.kubernetes"} 0.0
+    # HELP ansible_galaxy_collection_community_kubernetes_community_surveys Community surveys
+    # TYPE ansible_galaxy_collection_community_kubernetes_community_surveys gauge
+    ansible_galaxy_collection_community_kubernetes_community_surveys{collection_name="community.kubernetes"} 0.0
+    # HELP ansible_galaxy_collection_community_kubernetes_dependencies Dependency count
+    # TYPE ansible_galaxy_collection_community_kubernetes_dependencies gauge
+    ansible_galaxy_collection_community_kubernetes_dependencies{collection_name="community.kubernetes"} 0.0
+    # HELP ansible_galaxy_collection_community_kubernetes_downloads Download count
+    # TYPE ansible_galaxy_collection_community_kubernetes_downloads gauge
+    ansible_galaxy_collection_community_kubernetes_downloads{collection_name="community.kubernetes"} 324060.0
+    # HELP ansible_galaxy_collection_community_kubernetes_modified Modified datetime in epoch format
+    # TYPE ansible_galaxy_collection_community_kubernetes_modified gauge
+    ansible_galaxy_collection_community_kubernetes_modified{collection_name="community.kubernetes"} 1.588597767e+09
+    # HELP ansible_galaxy_collection_community_kubernetes_quality_score Quality score
+    # TYPE ansible_galaxy_collection_community_kubernetes_quality_score gauge
+    ansible_galaxy_collection_community_kubernetes_quality_score{collection_name="community.kubernetes"} 0.0
+    # HELP ansible_galaxy_collection_community_kubernetes_version_info Current release version
+    # TYPE ansible_galaxy_collection_community_kubernetes_version_info gauge
+    ansible_galaxy_collection_community_kubernetes_version_info{version="0.11.0"} 1.0
+    # HELP ansible_galaxy_collection_community_kubernetes_versions Version count
+    # TYPE ansible_galaxy_collection_community_kubernetes_versions gauge
+    ansible_galaxy_collection_community_kubernetes_versions{collection_name="community.kubernetes"} 3.0
+
+## License
+MIT
+See the [LICENSE](https://github.com/mesaguy/galaxy-exporter/blob/master/LICENSE) file
+
+## Author Information
+Mesaguy
+ - https://mesaguy.com
+ - https://github.com/mesaguy/galaxy-exporter
