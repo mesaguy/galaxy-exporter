@@ -40,15 +40,15 @@ COLLECTION_HTML = """<html>
         <p>
             Simple metrics for {collection_name}
             <ul>
-                <li>Raw <a href="/collection/{collection_name}/community_score">Community score </a> count integer</li>
-                <li>Raw <a href="/collection/{collection_name}/community_surveys">Community surveys</a> count integer</li>
+                <li>Raw <a href="/collection/{collection_name}/community_score">Community score </a> count</li>
+                <li>Raw <a href="/collection/{collection_name}/community_surveys">Community surveys</a> count</li>
                 <li>Raw <a href="/collection/{collection_name}/created">Created </a> epoch format datetime</li>
-                <li>Raw <a href="/collection/{collection_name}/dependencies">Dependencies </a> count integer</li>
-                <li>Raw <a href="/collection/{collection_name}/downloads">Download </a> count integer</li>
+                <li>Raw <a href="/collection/{collection_name}/dependencies">Dependencies </a> count</li>
+                <li>Raw <a href="/collection/{collection_name}/downloads">Download </a> count</li>
                 <li>Raw <a href="/collection/{collection_name}/modified">Modified </a> epoch format datetime</li>
-                <li>Raw <a href="/collection/{collection_name}/quality_score">Quality score </a> count integer</li>
+                <li>Raw <a href="/collection/{collection_name}/quality_score">Quality score </a> count</li>
                 <li>Raw <a href="/collection/{collection_name}/version">Version </a> current version</li>
-                <li>Raw <a href="/collection/{collection_name}/versions">Versions </a> count integer</li>
+                <li>Raw <a href="/collection/{collection_name}/versions">Versions </a> count</li>
             </ul>
         </p>
     </body>
@@ -66,20 +66,19 @@ ROLE_HTML = """<html>
         <p>
             Simple metrics for {role_name}
             <ul>
-                <li>Raw <a href="/role/{role_name}/community_score">Community score </a> count integer</li>
-                <li>Raw <a href="/role/{role_name}/community_surveys">Community surveys</a> count integer</li>
+                <li>Raw <a href="/role/{role_name}/community_score">Community score </a> count</li>
+                <li>Raw <a href="/role/{role_name}/community_surveys">Community surveys</a> count</li>
                 <li>Raw <a href="/role/{role_name}/created">Created </a> epoch format datetime</li>
-                <li>Raw <a href="/role/{role_name}/dependencies">Dependencies </a> count integer</li>
-                <li>Raw <a href="/role/{role_name}/downloads">Download </a> count integer</li>
-                <li>Raw <a href="/role/{role_name}/forks">Forks </a> count integer</li>
+                <li>Raw <a href="/role/{role_name}/downloads">Download </a> count</li>
+                <li>Raw <a href="/role/{role_name}/forks">Forks </a> count</li>
                 <li>Raw <a href="/role/{role_name}/imported">Imported </a> epoch format datetime</li>
                 <li>Raw <a href="/role/{role_name}/modified">Modified </a> epoch format datetime</li>
-                <li>Raw <a href="/role/{role_name}/open_issues">Open Issues </a> count integer</li>
-                <li>Raw <a href="/role/{role_name}/platforms">Platforms </a> count integer</li>
-                <li>Raw <a href="/role/{role_name}/quality_score">Quality score </a> count integer</li>
-                <li>Raw <a href="/role/{role_name}/stars">Star </a> count integer</li>
+                <li>Raw <a href="/role/{role_name}/open_issues">Open Issues </a> count</li>
+                <li>Raw <a href="/role/{role_name}/quality_score">Quality score </a> count</li>
+                <li>Raw <a href="/role/{role_name}/stars">Star </a> count</li>
                 <li>Raw <a href="/role/{role_name}/version">Version </a> current version</li>
-                <li>Raw <a href="/role/{role_name}/versions">Versions </a> count integer</li>
+                <li>Raw <a href="/role/{role_name}/versions">Versions </a> count</li>
+                <li>Raw <a href="/role/{role_name}/watchers">Watcher </a> count</li>
             </ul>
         </p>
     </body>
@@ -105,20 +104,19 @@ ROOT_HTML = f"""<html>
         <p>
             For simple metrics, go to:
             <ul>
-                <li>/role/ROLE_NAME/community_score for a raw community score count float</li>
-                <li>/role/ROLE_NAME/community_surveys for a raw community survey count integer</li>
+                <li>/role/ROLE_NAME/community_score for a raw community score count</li>
+                <li>/role/ROLE_NAME/community_surveys for a raw community survey count</li>
                 <li>/role/ROLE_NAME/created for a raw created datetime in epoch format</li>
-                <li>/role/ROLE_NAME/dependencies for a raw dependency count integer</li>
-                <li>/role/ROLE_NAME/downloads for a raw download count integer</li>
-                <li>/role/ROLE_NAME/forks for a raw forks count integer</li>
+                <li>/role/ROLE_NAME/downloads for a raw download count</li>
+                <li>/role/ROLE_NAME/forks for a raw forks count</li>
                 <li>/role/ROLE_NAME/imported for a raw imported datetime in epoch format</li>
                 <li>/role/ROLE_NAME/modified for a raw modified datetime in epoch format</li>
-                <li>/role/ROLE_NAME/open_issues for a raw open issues count integer</li>
-                <li>/role/ROLE_NAME/platforms for a raw platform count integer</li>
-                <li>/role/ROLE_NAME/quality_score for a raw quality score count float</li>
-                <li>/role/ROLE_NAME/stars for a raw stars count integer</li>
+                <li>/role/ROLE_NAME/open_issues for a raw open issues count</li>
+                <li>/role/ROLE_NAME/quality_score for a raw quality score count</li>
+                <li>/role/ROLE_NAME/stars for a raw stars count</li>
                 <li>/role/ROLE_NAME/version for a raw version number</li>
-                <li>/role/ROLE_NAME/versions for a raw version count integer</li>
+                <li>/role/ROLE_NAME/versions for a raw version count</li>
+                <li>/role/ROLE_NAME/watchers for a raw watcher count</li>
             </ul>
         </p>
         <p>
@@ -127,20 +125,21 @@ ROOT_HTML = f"""<html>
         <p>
             For simple metrics, go to:
             <ul>
-                <li>/role/COLLECTION_NAME/community_score for a raw community score count float</li>
-                <li>/role/COLLECTION_NAME/community_surveys for a raw community survey count integer</li>
+                <li>/role/COLLECTION_NAME/community_score for a raw community score count</li>
+                <li>/role/COLLECTION_NAME/community_surveys for a raw community survey count</li>
                 <li>/role/COLLECTION_NAME/created for a raw created datetime in epoch format</li>
-                <li>/role/COLLECTION_NAME/dependencies for a raw dependency count integer</li>
-                <li>/role/COLLECTION_NAME/downloads for a raw download count integer</li>
+                <li>/role/COLLECTION_NAME/dependencies for a raw dependency count</li>
+                <li>/role/COLLECTION_NAME/downloads for a raw download count</li>
                 <li>/role/COLLECTION_NAME/modified for a raw modified datetime in epoch format</li>
-                <li>/role/COLLECTION_NAME/quality_score for a raw quality score count float</li>
+                <li>/role/COLLECTION_NAME/quality_score for a raw quality score count</li>
                 <li>/role/COLLECTION_NAME/version for a raw version number</li>
-                <li>/role/COLLECTION_NAME/versions for a raw version count integer</li>
+                <li>/role/COLLECTION_NAME/versions for a raw version count</li>
             </ul>
         </p>
     </body>
 </html>
 """
+
 
 class GalaxyData:
     def __init__(self, name):
@@ -157,35 +156,36 @@ class GalaxyData:
 
     def _setup_generic_metrics(self, metric_prefix, labels):
         return dict(
-            created=Gauge(f'{metric_prefix}_created', \
-                'Created datetime in epoch format', labels, \
-                registry=self.registry),
-            community_score=Gauge(f'{metric_prefix}_community_score', 'Community score', \
-                labels, registry=self.registry),
-            community_survey=Gauge(f'{metric_prefix}_community_surveys', 'Community surveys', \
-                labels, registry=self.registry),
-            dependency=Gauge(f'{metric_prefix}_dependencies', 'Dependency count', \
-                labels, registry=self.registry),
-            download=Gauge(f'{metric_prefix}_downloads', 'Download count', \
-                labels, registry=self.registry),
-            modified=Gauge(f'{metric_prefix}_modified', \
-                'Modified datetime in epoch format', labels, \
-                registry=self.registry),
-            quality_score=Gauge(f'{metric_prefix}_quality_score', 'Quality score', \
-                labels, registry=self.registry),
-            version=Info(f'{metric_prefix}_version', 'Current release version', \
-                registry=self.registry),
-            versions=Gauge(f'{metric_prefix}_versions', 'Version count', \
-                labels, registry=self.registry),
+            created=Gauge(f'{metric_prefix}_created', 'Created datetime in epoch format', labels,
+                          registry=self.registry),
+            community_score=Gauge(f'{metric_prefix}_community_score', 'Community score', labels,
+                                  registry=self.registry),
+            community_survey=Gauge(f'{metric_prefix}_community_surveys', 'Community surveys', labels,
+                                   registry=self.registry),
+            download=Gauge(f'{metric_prefix}_downloads', 'Download count', labels, registry=self.registry),
+            modified=Gauge(f'{metric_prefix}_modified', 'Modified datetime in epoch format', labels,
+                           registry=self.registry),
+            quality_score=Gauge(f'{metric_prefix}_quality_score', 'Quality score', labels, registry=self.registry),
+            version=Info(f'{metric_prefix}_version', 'Current release version', registry=self.registry),
+            versions=Gauge(f'{metric_prefix}_versions', 'Version count', labels, registry=self.registry),
         )
 
-    def created_epoch(self):
+    def metric__community_score(self):
+        score = self.data['community_score']
+        if score is None:
+            return '0'
+        return str(score)
+
+    def metric__community_surveys(self):
+        return str(self.data['community_survey_count'])
+
+    def metric__created(self):
         return str(dateparse(self.data['created']).strftime('%s'))
 
-    def downloads(self):
+    def metric__downloads(self):
         return str(self.data['download_count'])
 
-    def modified_epoch(self):
+    def metric__modified(self):
         return str(dateparse(self.data['modified']).strftime('%s'))
 
     def full_name(self):
@@ -195,8 +195,7 @@ class GalaxyData:
         return RE_SAFE.sub('_', self.full_name())
 
     async def update(self):
-        fastapi_logger.info('Fetching %s "%s" metadata', \
-            self.__class__.__name__, self.full_name())
+        fastapi_logger.info('Fetching %s "%s" metadata', self.__class__.__name__, self.full_name())
         # Ensure no two lookups occur at the same time
         async with asyncio.Lock():
             # Create HTTP session
@@ -215,20 +214,12 @@ class GalaxyData:
             return True
         return False
 
+
 class Collection(GalaxyData):
-    def community_score(self):
-        score = self.data['community_score']
-        if score is None:
-            return '0'
-        return str(score)
-
-    def community_surveys(self):
-        return str(self.data['community_survey_count'])
-
-    def dependencies(self):
+    def metric__dependencies(self):
         return str(len(self.data['latest_version']['metadata']['dependencies']))
 
-    def quality_score(self):
+    def metric__quality_score(self):
         score = self.data['latest_version']['quality_score']
         if score is None:
             return '0'
@@ -238,78 +229,68 @@ class Collection(GalaxyData):
         return 'https://galaxy.ansible.com/api/internal/ui/collections/' \
             f'{self.author}/{self.name}/?format=json'
 
-    def version(self):
+    def metric__version(self):
         return self.data['latest_version']['version']
 
-    def versions(self):
+    def metric__versions(self):
         return str(len(self.data['all_versions']))
 
     def _setup_metrics(self):
         metric_prefix = f'ansible_galaxy_collection_{self.safe_name()}'
         metrics = self._setup_generic_metrics(metric_prefix, ['collection_name'])
+        metrics.update(dict(
+            dependency=Gauge(f'{metric_prefix}_dependencies', 'Dependency count',
+                             ['collection_name'], registry=self.registry),
+            ))
         return metrics
+
 
 class Role(GalaxyData):
     def url(self):
-        return 'https://galaxy.ansible.com/api/v1/roles/?' \
-            f'owner__username={self.author}&name={self.name}'
+        return 'https://galaxy.ansible.com/api/internal/ui/' \
+            f'repo-or-collection-detail/?format=json&namespace={self.author}&name={self.name}'
 
     def _setup_metrics(self):
         metric_prefix = f'ansible_galaxy_role_{self.safe_name()}'
         metrics = self._setup_generic_metrics(metric_prefix, ['role_name'])
         metrics.update(dict(
-            fork=Gauge(f'{metric_prefix}_forks', 'Fork count', \
-                ['role_name'], registry=self.registry),
-            imported=Gauge(f'{metric_prefix}_imported', \
-                'Imported datetime in epoch format', ['role_name'], \
-                registry=self.registry),
-            platform=Gauge(f'{metric_prefix}_platforms', 'Platform count', \
-                ['role_name'], registry=self.registry),
-            open_issue=Gauge(f'{metric_prefix}_open_issues', \
-                'Open Issues count', ['role_name'], registry=self.registry),
-            star=Gauge(f'{metric_prefix}_stars', 'Stars count', \
-                ['role_name'], registry=self.registry),
+            fork=Gauge(f'{metric_prefix}_forks', 'Fork count', ['role_name'], registry=self.registry),
+            imported=Gauge(f'{metric_prefix}_imported', 'Imported datetime in epoch format', ['role_name'],
+                           registry=self.registry),
+            open_issue=Gauge(f'{metric_prefix}_open_issues', 'Open Issues count', ['role_name'],
+                             registry=self.registry),
+            star=Gauge(f'{metric_prefix}_stars', 'Stars count', ['role_name'], registry=self.registry),
+            watchers=Gauge(f'{metric_prefix}_watchers', 'Watcher count', ['role_name'], registry=self.registry),
             ))
         return metrics
 
-    def community_score(self):
-        score = self.data['summary_fields']['repository']['community_score']
+    def metric__quality_score(self):
+        score = self.data['quality_score']
         if score is None:
             return '0'
         return str(score)
 
-    def dependencies(self):
-        return str(len(self.data['summary_fields']['dependencies']))
-
-    def platforms(self):
-        return str(len(self.data['summary_fields']['platforms']))
-
-    def quality_score(self):
-        score = self.data['summary_fields']['repository']['quality_score']
-        if score is None:
-            return '0'
-        return str(score)
-
-    def community_surveys(self):
-        return str(self.data['summary_fields']['repository']['community_survey_count'])
-
-    def forks(self):
+    def metric__forks(self):
         return str(self.data['forks_count'])
 
-    def imported_epoch(self):
-        return str(dateparse(self.data['imported']).strftime('%s'))
+    def metric__imported(self):
+        return str(dateparse(self.data['summary_fields']['latest_import']['finished']).strftime('%s'))
 
-    def open_issues(self):
+    def metric__open_issues(self):
         return str(self.data['open_issues_count'])
 
-    def stars(self):
+    def metric__stars(self):
         return str(self.data['stargazers_count'])
 
-    def version(self):
-        return self.data['summary_fields']['versions'][0]["name"]
+    def metric__watchers(self):
+        return str(self.data['watchers_count'])
 
-    def versions(self):
+    def metric__version(self):
+        return self.data['summary_fields']['versions'][0]['version']
+
+    def metric__versions(self):
         return str(len(self.data['summary_fields']['versions']))
+
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -317,9 +298,11 @@ async def root():
     """
     return ROOT_HTML
 
+
 @app.get("/metrics", response_class=PlainTextResponse)
 async def process_metrics():
     return generate_latest()
+
 
 @app.get('/collection/{collection_name}', response_class=HTMLResponse)
 async def collection_base(collection_name: str):
@@ -327,66 +310,25 @@ async def collection_base(collection_name: str):
     """
     return COLLECTION_HTML.format(collection_name=collection_name)
 
-@app.get('/collection/{collection_name}/community_score', response_class=PlainTextResponse)
-async def collection_community_score(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.community_score()
 
-@app.get('/collection/{collection_name}/community_surveys', response_class=PlainTextResponse)
-async def collection_community_surveys(collection_name: str):
+@app.get('/collection/{collection_name}/{metric}', response_class=PlainTextResponse)
+async def collection_community_score(collection_name: str, metric: str):
     collection = await get_collection(collection_name)
-    return collection.community_surveys()
+    if metric == 'metrics':
+        collection.metrics['community_score'].labels(collection_name)\
+            .set(collection.metric__community_score())
+        collection.metrics['community_survey'].labels(collection_name)\
+            .set(collection.metric__community_surveys())
+        collection.metrics['created'].labels(collection_name).set(collection.metric__created())
+        collection.metrics['dependency'].labels(collection_name).set(collection.metric__dependencies())
+        collection.metrics['download'].labels(collection_name).set(collection.metric__downloads())
+        collection.metrics['modified'].labels(collection_name).set(collection.metric__modified())
+        collection.metrics['quality_score'].labels(collection_name).set(collection.metric__quality_score())
+        collection.metrics['version'].info({'version': collection.metric__version()})
+        collection.metrics['versions'].labels(collection_name).set(collection.metric__versions())
+        return generate_latest(registry=collection.registry)
+    return getattr(collection, f'metric__{metric}')()
 
-@app.get("/collection/{collection_name}/created", response_class=PlainTextResponse)
-async def collection_created(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.created_epoch()
-
-@app.get('/collection/{collection_name}/dependencies', response_class=PlainTextResponse)
-async def collection_dependencies(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.dependencies()
-
-@app.get("/collection/{collection_name}/downloads", response_class=PlainTextResponse)
-async def collection_downloads(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.downloads()
-
-@app.get("/collection/{collection_name}/modified", response_class=PlainTextResponse)
-async def collection_modified(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.modified_epoch()
-
-@app.get('/collection/{collection_name}/quality_score', response_class=PlainTextResponse)
-async def collection_quality_score(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.quality_score()
-
-@app.get('/collection/{collection_name}/version', response_class=PlainTextResponse)
-async def collection_version(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.version()
-
-@app.get('/collection/{collection_name}/versions', response_class=PlainTextResponse)
-async def collection_versions(collection_name: str):
-    collection = await get_collection(collection_name)
-    return collection.versions()
-
-@app.get("/collection/{collection_name}/metrics", response_class=PlainTextResponse)
-async def collection_metrics(collection_name: str):
-    collection = await get_collection(collection_name)
-    collection.metrics['community_score'].labels(collection_name)\
-        .set(collection.community_score())
-    collection.metrics['community_survey'].labels(collection_name)\
-        .set(collection.community_surveys())
-    collection.metrics['created'].labels(collection_name).set(collection.created_epoch())
-    collection.metrics['dependency'].labels(collection_name).set(collection.dependencies())
-    collection.metrics['download'].labels(collection_name).set(collection.downloads())
-    collection.metrics['modified'].labels(collection_name).set(collection.modified_epoch())
-    collection.metrics['quality_score'].labels(collection_name).set(collection.quality_score())
-    collection.metrics['version'].info({'version': collection.version()})
-    collection.metrics['versions'].labels(collection_name).set(collection.versions())
-    return generate_latest(registry=collection.registry)
 
 @app.get('/role/{role_name}', response_class=HTMLResponse)
 async def role_base(role_name: str):
@@ -394,97 +336,30 @@ async def role_base(role_name: str):
     """
     return ROLE_HTML.format(role_name=role_name)
 
-@app.get('/role/{role_name}/community_score', response_class=PlainTextResponse)
-async def role_community_score(role_name: str):
-    role = await get_role(role_name)
-    return role.community_score()
 
-@app.get('/role/{role_name}/community_surveys', response_class=PlainTextResponse)
-async def role_community_surveys(role_name: str):
+@app.get('/role/{role_name}/{metric}', response_class=PlainTextResponse)
+async def role_community_score(role_name: str, metric: str):
     role = await get_role(role_name)
-    return role.community_surveys()
+    if metric == 'metrics':
+        role.metrics['community_score'].labels(role_name).set(role.metric__community_score())
+        role.metrics['community_survey'].labels(role_name).set(role.metric__community_surveys())
+        role.metrics['created'].labels(role_name).set(role.metric__created())
+        role.metrics['download'].labels(role_name).set(role.metric__downloads())
+        role.metrics['fork'].labels(role_name).set(role.metric__forks())
+        role.metrics['imported'].labels(role_name).set(role.metric__imported())
+        role.metrics['modified'].labels(role_name).set(role.metric__modified())
+        role.metrics['open_issue'].labels(role_name).set(role.metric__open_issues())
+        role.metrics['quality_score'].labels(role_name).set(role.metric__quality_score())
+        role.metrics['star'].labels(role_name).set(role.metric__stars())
+        role.metrics['version'].info({'version': role.metric__version()})
+        role.metrics['versions'].labels(role_name).set(role.metric__versions())
+        role.metrics['watchers'].labels(role_name).set(role.metric__watchers())
+        return generate_latest(registry=role.registry)
+    return getattr(role, f'metric__{metric}')()
 
-@app.get("/role/{role_name}/created", response_class=PlainTextResponse)
-async def role_created(role_name: str):
-    role = await get_role(role_name)
-    return role.created_epoch()
-
-@app.get('/role/{role_name}/dependencies', response_class=PlainTextResponse)
-async def role_dependencies(role_name: str):
-    role = await get_role(role_name)
-    return role.dependencies()
-
-@app.get("/role/{role_name}/downloads", response_class=PlainTextResponse)
-async def role_downloads(role_name: str):
-    role = await get_role(role_name)
-    return role.downloads()
-
-@app.get("/role/{role_name}/forks", response_class=PlainTextResponse)
-async def role_forks(role_name: str):
-    role = await get_role(role_name)
-    return role.forks()
-
-@app.get("/role/{role_name}/imported", response_class=PlainTextResponse)
-async def role_imported(role_name: str):
-    role = await get_role(role_name)
-    return role.imported_epoch()
-
-@app.get("/role/{role_name}/modified", response_class=PlainTextResponse)
-async def role_modified(role_name: str):
-    role = await get_role(role_name)
-    return role.modified_epoch()
-
-@app.get('/role/{role_name}/platforms', response_class=PlainTextResponse)
-async def role_platforms(role_name: str):
-    role = await get_role(role_name)
-    return role.platforms()
-
-@app.get('/role/{role_name}/quality_score', response_class=PlainTextResponse)
-async def role_quality_score(role_name: str):
-    role = await get_role(role_name)
-    return role.quality_score()
-
-@app.get("/role/{role_name}/open_issues", response_class=PlainTextResponse)
-async def role_open_issues(role_name: str):
-    role = await get_role(role_name)
-    return role.open_issues()
-
-@app.get("/role/{role_name}/stars", response_class=PlainTextResponse)
-async def role_stars(role_name: str):
-    role = await get_role(role_name)
-    return role.stars()
-
-@app.get('/role/{role_name}/version', response_class=PlainTextResponse)
-async def role_version(role_name: str):
-    role = await get_role(role_name)
-    return role.version()
-
-@app.get('/role/{role_name}/versions', response_class=PlainTextResponse)
-async def role_versions(role_name: str):
-    role = await get_role(role_name)
-    return role.versions()
-
-@app.get("/role/{role_name}/metrics", response_class=PlainTextResponse)
-async def role_metrics(role_name: str):
-    role = await get_role(role_name)
-    role.metrics['community_score'].labels(role_name).set(role.community_score())
-    role.metrics['community_survey'].labels(role_name).set(role.community_surveys())
-    role.metrics['created'].labels(role_name).set(role.created_epoch())
-    role.metrics['dependency'].labels(role_name).set(role.dependencies())
-    role.metrics['download'].labels(role_name).set(role.downloads())
-    role.metrics['fork'].labels(role_name).set(role.forks())
-    role.metrics['imported'].labels(role_name).set(role.imported_epoch())
-    role.metrics['modified'].labels(role_name).set(role.modified_epoch())
-    role.metrics['open_issue'].labels(role_name).set(role.open_issues())
-    role.metrics['platform'].labels(role_name).set(role.platforms())
-    role.metrics['quality_score'].labels(role_name).set(role.quality_score())
-    role.metrics['star'].labels(role_name).set(role.stars())
-    role.metrics['version'].info({'version': role.version()})
-    role.metrics['versions'].labels(role_name).set(role.versions())
-    return generate_latest(registry=role.registry)
 
 async def get_collection(collection_name):
-    if not collection_name in COLLECTIONS:
+    if collection_name not in COLLECTIONS:
         COLLECTIONS[collection_name] = Collection(collection_name)
     collection = COLLECTIONS[collection_name]
     if collection.needs_update():
@@ -492,11 +367,12 @@ async def get_collection(collection_name):
         collection.data = data
     return collection
 
+
 async def get_role(role_name):
-    if not role_name in ROLES:
+    if role_name not in ROLES:
         ROLES[role_name] = Role(role_name)
     role = ROLES[role_name]
     if role.needs_update():
         data = await role.update()
-        role.data = data["results"][0]
+        role.data = data['data']['repository']
     return role

@@ -36,15 +36,17 @@ setup(
     long_description_content_type='text/markdown',
     packages=find_packages(),
     python_requires='>=3.6',
-    tests_require=[
-        'pylint >= 2.5.0,<2.6',
-        'pytest >= 5.3.2,<6',
-        'pytest-asyncio >= 0.11.0,<1',
-        'pytest-cov >= 2.8.1,<2.9',
-        'pytest-pep8 >= 1.0.6,<2',
-        'pytest-pylint >= 0.17.0',
-        'pytest-runner >= 5.1,<5.2',
-        ],
+    extras_require={
+        'testing': [
+            'requests >= 2.24.0,<3',
+            'pylint >= 2.5.0,<2.6',
+            'pytest >= 5.3.2,<6',
+            'pytest-asyncio >= 0.11.0,<1',
+            'pytest-cov >= 2.8.1,<2.9',
+            'pytest-pep8 >= 1.0.6,<2',
+            'pytest-pylint >= 0.17.0',
+        ]
+    },
     url='https://github.com/mesaguy/galaxy-exporter',
     version=__version__,
 )
