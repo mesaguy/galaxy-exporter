@@ -26,7 +26,7 @@ setup(
         'aiodns >= 2.0.0,<3',
         # For API calls to Ansible Galaxy
         'aiohttp >= 3.6.2,<4',
-        'fastapi >= 0.58,<1',
+        'fastapi >= 0.58.1,<1',
         # For exporting Prometheus metrics
         'prometheus_client >= 0.8.0,<1',
         'python-dateutil >= 2.8.1',
@@ -39,10 +39,10 @@ setup(
     extras_require={
         'testing': [
             'requests >= 2.24.0,<3',
-            'pylint >= 2.5.0,<2.6',
-            'pytest >= 5.3.2,<6',
+            'pylint >= 2.5.3,<2.6',
+            'pytest >= 5.4.3,<6',
             'pytest-asyncio >= 0.11.0,<1',
-            'pytest-cov >= 2.8.1,<2.9',
+            'pytest-cov >= 2.10.0,<2.9',
             'pytest-pep8 >= 1.0.6,<2',
             'pytest-pylint >= 0.17.0',
         ]

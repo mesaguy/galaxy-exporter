@@ -9,10 +9,10 @@ import re
 
 import aiohttp
 from dateutil.parser import parse as dateparse
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.logger import logger as fastapi_logger
 from fastapi.responses import HTMLResponse, PlainTextResponse
-from prometheus_client import CollectorRegistry, Gauge, Info
+from prometheus_client import CollectorRegistry, Counter, Gauge, Info
 from prometheus_client.exposition import generate_latest
 
 from galaxy_exporter import __version__
@@ -25,6 +25,7 @@ else:
 app = FastAPI()
 
 # Variables used for caching results
+METRICS = dict()
 ROLES = dict()
 COLLECTIONS = dict()
 
@@ -143,7 +144,7 @@ ROOT_HTML = f"""<html>
 
 class GalaxyData:
     def __init__(self, name):
-        self.author, self.name = name.split('.', 2)
+        self.name = name
         self.registry = CollectorRegistry()
         self.metrics = self._setup_metrics()
         self.data = dict()
@@ -154,20 +155,33 @@ class GalaxyData:
         """
         return dict()
 
+    def url(self):
+        """ Placeholder
+        """
+        return None
+
     def _setup_generic_metrics(self, metric_prefix, labels):
         return dict(
-            created=Gauge(f'{metric_prefix}_created', 'Created datetime in epoch format', labels,
+            created=Gauge(f'{metric_prefix}created',
+                          'Created datetime in epoch format', labels,
                           registry=self.registry),
-            community_score=Gauge(f'{metric_prefix}_community_score', 'Community score', labels,
+            community_score=Gauge(f'{metric_prefix}community_score',
+                                  'Community score', labels,
                                   registry=self.registry),
-            community_survey=Gauge(f'{metric_prefix}_community_surveys', 'Community surveys', labels,
+            community_survey=Gauge(f'{metric_prefix}community_surveys',
+                                   'Community surveys', labels,
                                    registry=self.registry),
-            download=Gauge(f'{metric_prefix}_downloads', 'Download count', labels, registry=self.registry),
-            modified=Gauge(f'{metric_prefix}_modified', 'Modified datetime in epoch format', labels,
+            download=Gauge(f'{metric_prefix}downloads', 'Download count',
+                           labels, registry=self.registry),
+            modified=Gauge(f'{metric_prefix}modified',
+                           'Modified datetime in epoch format', labels,
                            registry=self.registry),
-            quality_score=Gauge(f'{metric_prefix}_quality_score', 'Quality score', labels, registry=self.registry),
-            version=Info(f'{metric_prefix}_version', 'Current release version', registry=self.registry),
-            versions=Gauge(f'{metric_prefix}_versions', 'Version count', labels, registry=self.registry),
+            quality_score=Gauge(f'{metric_prefix}quality_score', 'Quality score',
+                                labels, registry=self.registry),
+            version=Info(f'{metric_prefix}version', 'Current release version',
+                         registry=self.registry),
+            versions=Gauge(f'{metric_prefix}versions', 'Version count',
+                           labels, registry=self.registry),
         )
 
     def metric__community_score(self):
@@ -188,14 +202,8 @@ class GalaxyData:
     def metric__modified(self):
         return str(dateparse(self.data['modified']).strftime('%s'))
 
-    def full_name(self):
-        return f'{self.author}.{self.name}'
-
-    def safe_name(self):
-        return RE_SAFE.sub('_', self.full_name())
-
     async def update(self):
-        fastapi_logger.info('Fetching %s "%s" metadata', self.__class__.__name__, self.full_name())
+        fastapi_logger.info('Fetching %s "%s" metadata', self.__class__.__name__, self.name)
         # Ensure no two lookups occur at the same time
         async with asyncio.Lock():
             # Create HTTP session
@@ -207,15 +215,19 @@ class GalaxyData:
         self.last_update = datetime.now()
         return jdata
 
-    def needs_update(self):
+    def needs_update(self, cache_seconds=CACHE_SECONDS):
         if self.last_update is None:
             return True
-        if (datetime.now() - self.last_update).seconds > CACHE_SECONDS:
+        if (datetime.now() - self.last_update).seconds > cache_seconds:
             return True
         return False
 
 
 class Collection(GalaxyData):
+    def __init__(self, name):
+        self.author, self.collection = name.split('.', 2)
+        super().__init__(name)
+
     def metric__dependencies(self):
         return str(len(self.data['latest_version']['metadata']['dependencies']))
 
@@ -227,7 +239,7 @@ class Collection(GalaxyData):
 
     def url(self):
         return 'https://galaxy.ansible.com/api/internal/ui/collections/' \
-            f'{self.author}/{self.name}/?format=json'
+            f'{self.author}/{self.collection}/?format=json'
 
     def metric__version(self):
         return self.data['latest_version']['version']
@@ -236,31 +248,41 @@ class Collection(GalaxyData):
         return str(len(self.data['all_versions']))
 
     def _setup_metrics(self):
-        metric_prefix = f'ansible_galaxy_collection_{self.safe_name()}'
-        metrics = self._setup_generic_metrics(metric_prefix, ['collection_name'])
+        metric_prefix = 'ansible_galaxy_collection_'
+        metrics = self._setup_generic_metrics(metric_prefix, ['job', 'instance'])
         metrics.update(dict(
-            dependency=Gauge(f'{metric_prefix}_dependencies', 'Dependency count',
-                             ['collection_name'], registry=self.registry),
+            dependency=Gauge(f'{metric_prefix}dependencies', 'Dependency count',
+                             ['job', 'instance'], registry=self.registry),
             ))
         return metrics
 
 
 class Role(GalaxyData):
+    def __init__(self, name):
+        self.author, self.role = name.split('.', 2)
+        super().__init__(name)
+
     def url(self):
         return 'https://galaxy.ansible.com/api/internal/ui/' \
-            f'repo-or-collection-detail/?format=json&namespace={self.author}&name={self.name}'
+            'repo-or-collection-detail/?format=json&namespace=' \
+            f'{self.author}&name={self.role}'
 
     def _setup_metrics(self):
-        metric_prefix = f'ansible_galaxy_role_{self.safe_name()}'
-        metrics = self._setup_generic_metrics(metric_prefix, ['role_name'])
+        metric_prefix = 'ansible_galaxy_role_'
+        metrics = self._setup_generic_metrics(metric_prefix, ['job', 'instance'])
         metrics.update(dict(
-            fork=Gauge(f'{metric_prefix}_forks', 'Fork count', ['role_name'], registry=self.registry),
-            imported=Gauge(f'{metric_prefix}_imported', 'Imported datetime in epoch format', ['role_name'],
+            fork=Gauge(f'{metric_prefix}forks', 'Fork count', ['job', 'instance'],
+                       registry=self.registry),
+            imported=Gauge(f'{metric_prefix}imported',
+                           'Imported datetime in epoch format', ['job', 'instance'],
                            registry=self.registry),
-            open_issue=Gauge(f'{metric_prefix}_open_issues', 'Open Issues count', ['role_name'],
+            open_issue=Gauge(f'{metric_prefix}open_issues',
+                             'Open Issues count', ['job', 'instance'],
                              registry=self.registry),
-            star=Gauge(f'{metric_prefix}_stars', 'Stars count', ['role_name'], registry=self.registry),
-            watchers=Gauge(f'{metric_prefix}_watchers', 'Watcher count', ['role_name'], registry=self.registry),
+            star=Gauge(f'{metric_prefix}stars', 'Stars count',
+                       ['job', 'instance'], registry=self.registry),
+            watchers=Gauge(f'{metric_prefix}watchers', 'Watcher count',
+                           ['job', 'instance'], registry=self.registry),
             ))
         return metrics
 
@@ -274,7 +296,8 @@ class Role(GalaxyData):
         return str(self.data['forks_count'])
 
     def metric__imported(self):
-        return str(dateparse(self.data['summary_fields']['latest_import']['finished']).strftime('%s'))
+        return str(dateparse(self.data['summary_fields']['latest_import']\
+                   ['finished']).strftime('%s'))
 
     def metric__open_issues(self):
         return str(self.data['open_issues_count'])
@@ -292,6 +315,39 @@ class Role(GalaxyData):
         return str(len(self.data['summary_fields']['versions']))
 
 
+def set_collection_metrics(collection):
+    collection.metrics['community_score'].labels('galaxy', collection.name)\
+        .set(collection.metric__community_score())
+    collection.metrics['community_survey'].labels('galaxy', collection.name)\
+        .set(collection.metric__community_surveys())
+    collection.metrics['created'].labels('galaxy', collection.name).set(collection.metric__created())
+    collection.metrics['dependency'].labels('galaxy', collection.name).set(collection.metric__dependencies())
+    collection.metrics['download'].labels('galaxy', collection.name).set(collection.metric__downloads())
+    collection.metrics['modified'].labels('galaxy', collection.name).set(collection.metric__modified())
+    collection.metrics['quality_score'].labels('galaxy', collection.name)\
+        .set(collection.metric__quality_score())
+    collection.metrics['version'].info({'version': collection.metric__version()})
+    collection.metrics['versions'].labels('galaxy', collection.name).set(collection.metric__versions())
+    return collection
+
+
+def set_role_metrics(role):
+    role.metrics['community_score'].labels('galaxy', role.name).set(role.metric__community_score())
+    role.metrics['community_survey'].labels('galaxy', role.name).set(role.metric__community_surveys())
+    role.metrics['created'].labels('galaxy', role.name).set(role.metric__created())
+    role.metrics['download'].labels('galaxy', role.name).set(role.metric__downloads())
+    role.metrics['fork'].labels('galaxy', role.name).set(role.metric__forks())
+    role.metrics['imported'].labels('galaxy', role.name).set(role.metric__imported())
+    role.metrics['modified'].labels('galaxy', role.name).set(role.metric__modified())
+    role.metrics['open_issue'].labels('galaxy', role.name).set(role.metric__open_issues())
+    role.metrics['quality_score'].labels('galaxy', role.name).set(role.metric__quality_score())
+    role.metrics['star'].labels('galaxy', role.name).set(role.metric__stars())
+    role.metrics['version'].info({'version': role.metric__version()})
+    role.metrics['versions'].labels('galaxy', role.name).set(role.metric__versions())
+    role.metrics['watchers'].labels('galaxy', role.name).set(role.metric__watchers())
+    return role
+
+
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """ Generate root HTML page
@@ -301,6 +357,7 @@ async def root():
 
 @app.get("/metrics", response_class=PlainTextResponse)
 async def process_metrics():
+    update_base_metrics()
     return generate_latest()
 
 
@@ -311,21 +368,26 @@ async def collection_base(collection_name: str):
     return COLLECTION_HTML.format(collection_name=collection_name)
 
 
+@app.get('/probe', response_class=PlainTextResponse)
+async def probe(module: str, target: str):
+    if module not in ['collection', 'role']:
+        raise HTTPException(status_code=404,
+                            detail=f'Unknown module {module}, use '
+                            '"collection" or "role"')
+    if module == 'collection':
+        collection = await get_collection(target)
+        collection = set_collection_metrics(collection)
+        return generate_latest(registry=collection.registry)
+    role = await get_role(target)
+    role = set_role_metrics(role)
+    return generate_latest(registry=role.registry)
+
+
 @app.get('/collection/{collection_name}/{metric}', response_class=PlainTextResponse)
 async def collection_community_score(collection_name: str, metric: str):
     collection = await get_collection(collection_name)
     if metric == 'metrics':
-        collection.metrics['community_score'].labels(collection_name)\
-            .set(collection.metric__community_score())
-        collection.metrics['community_survey'].labels(collection_name)\
-            .set(collection.metric__community_surveys())
-        collection.metrics['created'].labels(collection_name).set(collection.metric__created())
-        collection.metrics['dependency'].labels(collection_name).set(collection.metric__dependencies())
-        collection.metrics['download'].labels(collection_name).set(collection.metric__downloads())
-        collection.metrics['modified'].labels(collection_name).set(collection.metric__modified())
-        collection.metrics['quality_score'].labels(collection_name).set(collection.metric__quality_score())
-        collection.metrics['version'].info({'version': collection.metric__version()})
-        collection.metrics['versions'].labels(collection_name).set(collection.metric__versions())
+        collection = set_collection_metrics(collection)
         return generate_latest(registry=collection.registry)
     return getattr(collection, f'metric__{metric}')()
 
@@ -341,24 +403,25 @@ async def role_base(role_name: str):
 async def role_community_score(role_name: str, metric: str):
     role = await get_role(role_name)
     if metric == 'metrics':
-        role.metrics['community_score'].labels(role_name).set(role.metric__community_score())
-        role.metrics['community_survey'].labels(role_name).set(role.metric__community_surveys())
-        role.metrics['created'].labels(role_name).set(role.metric__created())
-        role.metrics['download'].labels(role_name).set(role.metric__downloads())
-        role.metrics['fork'].labels(role_name).set(role.metric__forks())
-        role.metrics['imported'].labels(role_name).set(role.metric__imported())
-        role.metrics['modified'].labels(role_name).set(role.metric__modified())
-        role.metrics['open_issue'].labels(role_name).set(role.metric__open_issues())
-        role.metrics['quality_score'].labels(role_name).set(role.metric__quality_score())
-        role.metrics['star'].labels(role_name).set(role.metric__stars())
-        role.metrics['version'].info({'version': role.metric__version()})
-        role.metrics['versions'].labels(role_name).set(role.metric__versions())
-        role.metrics['watchers'].labels(role_name).set(role.metric__watchers())
+        role = set_role_metrics(role)
         return generate_latest(registry=role.registry)
     return getattr(role, f'metric__{metric}')()
 
 
+def update_base_metrics(increment=False):
+    if 'version' not in METRICS:
+        METRICS['version'] = Info(f'ansible_galaxy_exporter_version',
+            'Current exporter version')
+        METRICS['version'].info({'version': __version__})
+    if 'api_call_count' not in METRICS:
+        METRICS['api_call_count'] = Counter('ansible_galaxy_exporter_api_call_count',
+            'API calls to Ansible Galaxy')
+    if increment:
+        METRICS['api_call_count'].inc()
+
+
 async def get_collection(collection_name):
+    update_base_metrics(increment=True)
     if collection_name not in COLLECTIONS:
         COLLECTIONS[collection_name] = Collection(collection_name)
     collection = COLLECTIONS[collection_name]
@@ -369,6 +432,7 @@ async def get_collection(collection_name):
 
 
 async def get_role(role_name):
+    update_base_metrics(increment=True)
     if role_name not in ROLES:
         ROLES[role_name] = Role(role_name)
     role = ROLES[role_name]

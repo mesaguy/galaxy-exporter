@@ -1,7 +1,4 @@
-from tests import client
-
-
-TEST_ROLE = 'mesaguy.prometheus'
+from tests import TEST_ROLE, client
 
 
 def test_role_base():

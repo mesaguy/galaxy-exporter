@@ -6,7 +6,7 @@
 
 This container image collects Ansible Galaxy metrics and makes the metrics available via HTTP for Prometheus and very simple collectors.
 
-Runs on port 8000/tcp as the user 'nobody' and daemon logs are send to stdout.
+Runs on port 9288/tcp as the user 'nobody' and daemon logs are send to stdout.
 
 ## Usage
 
@@ -23,19 +23,19 @@ Install:
 
 The application can be run locally via:
 
-    uvicorn galaxy_exporter.galaxy_exporter:app --reload
+    uvicorn galaxy_exporter.galaxy_exporter:app --port 9288 --reload
 
 ### Docker
 
 The most basic usage is the following, which starts the exporter:
 
-    docker run --rm -p 8000:8000 -it mesaguy/galaxy-exporter
+    docker run --rm -p 9288:9288 --cap-add=net_raw -it mesaguy/galaxy-exporter
 
 By default, all Ansible Galaxy results are cached for 15 seconds to ensure Ansible Galaxy isn't polled excessively. This value can be changed with the ```CACHE_SECONDS``` environmental variable. Setting the cache value to ```0``` disables caching completely.
 
 ## Ansible role metrics
 
-A ```curl localhost:8000/role/dev-sec.ssh-hardening``` returns:
+A ```curl localhost:9288/role/dev-sec.ssh-hardening``` returns:
 
     <html>
         <head>
@@ -67,13 +67,13 @@ A ```curl localhost:8000/role/dev-sec.ssh-hardening``` returns:
         </body>
     </html>
 
-To gather just the star count, ```curl localhost:8000/role/dev-sec.ssh-hardening/stars``` returns ```663```. Note that the result has no trailing newline. These simple metrics are useful for polling from simple devices like Arduinos.
+To gather just the star count, ```curl localhost:9288/role/dev-sec.ssh-hardening/stars``` returns ```663```. Note that the result has no trailing newline. These simple metrics are useful for polling from simple devices like Arduinos.
 
 ### Prometheus role metrics
 
 All Ansible Galaxy metrics are prefixed with ```ansible_galaxy_role```, then have the role's name with all ```.``` and ```-``` characters converted to underscores, then the type of collected data is specified (ie: _stars).
 
-Example Prometheus role metrics from running ```curl localhost:8000/role/dev-sec.ssh-hardening/metrics```:
+Example Prometheus role metrics from running ```curl localhost:9288/role/dev-sec.ssh-hardening/metrics```:
 
     # HELP ansible_galaxy_role_dev_sec_ssh_hardening_created Created datetime in epoch format
     # TYPE ansible_galaxy_role_dev_sec_ssh_hardening_created gauge
@@ -120,7 +120,7 @@ Example Prometheus role metrics from running ```curl localhost:8000/role/dev-sec
 
 ## Ansible collection metrics
 
-A ```curl localhost:8000/collection/community.kubernetes``` returns:
+A ```curl localhost:9288/collection/community.kubernetes``` returns:
 
     <html>
         <head>
@@ -151,7 +151,7 @@ A ```curl localhost:8000/collection/community.kubernetes``` returns:
 
 All Ansible Galaxy collection metrics are prefixed with ```ansible_galaxy_collection```, then have the collection's name with all ```.``` and ```-``` characters converted to underscores, then the type of collected data is specified (ie: _downloads).
 
-Example Prometheus metrics from running ```localhost:8000/collection/community.kubernetes/metrics```:
+Example Prometheus metrics from running ```localhost:9288/collection/community.kubernetes/metrics```:
 
     # HELP ansible_galaxy_collection_community_kubernetes_created Created datetime in epoch format
     # TYPE ansible_galaxy_collection_community_kubernetes_created gauge

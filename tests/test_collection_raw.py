@@ -1,7 +1,4 @@
-from tests import client
-
-
-TEST_COLLECTION = 'community.kubernetes'
+from tests import TEST_COLLECTION, client
 
 
 def test_collection_community_score():
