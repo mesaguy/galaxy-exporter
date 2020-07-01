@@ -31,13 +31,13 @@ def test_role_metrics_cache():
     role = galaxy_exporter.galaxy_exporter.ROLES[TEST_ROLE]
 
     # No update necessary, default CACHE_SECONDS is 15s
-    assert role.needs_update() == False
+    assert role.needs_update() is False
 
     # Sleep to make testing cache expiration times possible
     time.sleep(2.1)
 
     # If cache expires after 1s, an update is now needed
-    assert role.needs_update(cache_seconds=1) == True
+    assert role.needs_update(cache_seconds=1) is True
 
     # If cache expires after 10s, an update is not needed
-    assert role.needs_update(cache_seconds=10) == False
+    assert role.needs_update(cache_seconds=10) is False

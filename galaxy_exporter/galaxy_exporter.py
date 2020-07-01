@@ -14,6 +14,7 @@ from fastapi.logger import logger as fastapi_logger
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from prometheus_client import CollectorRegistry, Counter, Gauge, Info
 from prometheus_client.exposition import generate_latest
+from tenacity import AsyncRetrying, RetryError, stop_after_delay
 
 from galaxy_exporter import __version__
 
@@ -160,28 +161,26 @@ class GalaxyData:
         """
         return None
 
-    def _setup_generic_metrics(self, metric_prefix, labels):
+    def _setup_generic_metrics(self, metric_prefix):
         return dict(
             created=Gauge(f'{metric_prefix}created',
-                          'Created datetime in epoch format', labels,
+                          'Created datetime in epoch format',
                           registry=self.registry),
             community_score=Gauge(f'{metric_prefix}community_score',
-                                  'Community score', labels,
-                                  registry=self.registry),
+                                  'Community score', registry=self.registry),
             community_survey=Gauge(f'{metric_prefix}community_surveys',
-                                   'Community surveys', labels,
-                                   registry=self.registry),
+                                   'Community surveys', registry=self.registry),
             download=Gauge(f'{metric_prefix}downloads', 'Download count',
-                           labels, registry=self.registry),
+                           registry=self.registry),
             modified=Gauge(f'{metric_prefix}modified',
-                           'Modified datetime in epoch format', labels,
+                           'Modified datetime in epoch format',
                            registry=self.registry),
             quality_score=Gauge(f'{metric_prefix}quality_score', 'Quality score',
-                                labels, registry=self.registry),
+                                registry=self.registry),
             version=Info(f'{metric_prefix}version', 'Current release version',
                          registry=self.registry),
             versions=Gauge(f'{metric_prefix}versions', 'Version count',
-                           labels, registry=self.registry),
+                           registry=self.registry),
         )
 
     def metric__community_score(self):
@@ -206,12 +205,10 @@ class GalaxyData:
         fastapi_logger.info('Fetching %s "%s" metadata', self.__class__.__name__, self.name)
         # Ensure no two lookups occur at the same time
         async with asyncio.Lock():
-            # Create HTTP session
-            async with aiohttp.ClientSession() as session:
-                # Fetch latest JSON from Ansible Galaxy API
-                async with session.get(self.url()) as response:
-                    # Cache latest JSON
-                    jdata = json.loads(await response.text())
+            text = await fetch_from_url(self.url())
+            if text is None:
+                return None
+            jdata = json.loads(text)
         self.last_update = datetime.now()
         return jdata
 
@@ -221,6 +218,21 @@ class GalaxyData:
         if (datetime.now() - self.last_update).seconds > cache_seconds:
             return True
         return False
+
+
+async def fetch_from_url(url):
+    try:
+        async for attempt in AsyncRetrying(stop=stop_after_delay(5)):
+            with attempt:
+                # Create HTTP session
+                async with aiohttp.ClientSession() as session:
+                    # Fetch latest JSON from Ansible Galaxy API
+                    async with session.get(url) as response:
+                        # Cache latest JSON
+                        return await response.text()
+    except RetryError:
+        fastapi_logger.exception('Error fetching URL %s', url)
+    return None
 
 
 class Collection(GalaxyData):
@@ -249,10 +261,10 @@ class Collection(GalaxyData):
 
     def _setup_metrics(self):
         metric_prefix = 'ansible_galaxy_collection_'
-        metrics = self._setup_generic_metrics(metric_prefix, ['job', 'instance'])
+        metrics = self._setup_generic_metrics(metric_prefix)
         metrics.update(dict(
             dependency=Gauge(f'{metric_prefix}dependencies', 'Dependency count',
-                             ['job', 'instance'], registry=self.registry),
+                             registry=self.registry),
             ))
         return metrics
 
@@ -269,20 +281,19 @@ class Role(GalaxyData):
 
     def _setup_metrics(self):
         metric_prefix = 'ansible_galaxy_role_'
-        metrics = self._setup_generic_metrics(metric_prefix, ['job', 'instance'])
+        metrics = self._setup_generic_metrics(metric_prefix)
         metrics.update(dict(
-            fork=Gauge(f'{metric_prefix}forks', 'Fork count', ['job', 'instance'],
+            fork=Gauge(f'{metric_prefix}forks', 'Fork count',
                        registry=self.registry),
             imported=Gauge(f'{metric_prefix}imported',
-                           'Imported datetime in epoch format', ['job', 'instance'],
+                           'Imported datetime in epoch format',
                            registry=self.registry),
-            open_issue=Gauge(f'{metric_prefix}open_issues',
-                             'Open Issues count', ['job', 'instance'],
+            open_issue=Gauge(f'{metric_prefix}open_issues', 'Open Issues count',
                              registry=self.registry),
             star=Gauge(f'{metric_prefix}stars', 'Stars count',
-                       ['job', 'instance'], registry=self.registry),
+                       registry=self.registry),
             watchers=Gauge(f'{metric_prefix}watchers', 'Watcher count',
-                           ['job', 'instance'], registry=self.registry),
+                           registry=self.registry),
             ))
         return metrics
 
@@ -296,8 +307,9 @@ class Role(GalaxyData):
         return str(self.data['forks_count'])
 
     def metric__imported(self):
-        return str(dateparse(self.data['summary_fields']['latest_import']\
-                   ['finished']).strftime('%s'))
+        return str(dateparse(
+            self.data['summary_fields']['latest_import']['finished'])
+            .strftime('%s'))
 
     def metric__open_issues(self):
         return str(self.data['open_issues_count'])
@@ -316,35 +328,32 @@ class Role(GalaxyData):
 
 
 def set_collection_metrics(collection):
-    collection.metrics['community_score'].labels('galaxy', collection.name)\
-        .set(collection.metric__community_score())
-    collection.metrics['community_survey'].labels('galaxy', collection.name)\
-        .set(collection.metric__community_surveys())
-    collection.metrics['created'].labels('galaxy', collection.name).set(collection.metric__created())
-    collection.metrics['dependency'].labels('galaxy', collection.name).set(collection.metric__dependencies())
-    collection.metrics['download'].labels('galaxy', collection.name).set(collection.metric__downloads())
-    collection.metrics['modified'].labels('galaxy', collection.name).set(collection.metric__modified())
-    collection.metrics['quality_score'].labels('galaxy', collection.name)\
-        .set(collection.metric__quality_score())
+    collection.metrics['community_score'].set(collection.metric__community_score())
+    collection.metrics['community_survey'].set(collection.metric__community_surveys())
+    collection.metrics['created'].set(collection.metric__created())
+    collection.metrics['dependency'].set(collection.metric__dependencies())
+    collection.metrics['download'].set(collection.metric__downloads())
+    collection.metrics['modified'].set(collection.metric__modified())
+    collection.metrics['quality_score'].set(collection.metric__quality_score())
     collection.metrics['version'].info({'version': collection.metric__version()})
-    collection.metrics['versions'].labels('galaxy', collection.name).set(collection.metric__versions())
+    collection.metrics['versions'].set(collection.metric__versions())
     return collection
 
 
 def set_role_metrics(role):
-    role.metrics['community_score'].labels('galaxy', role.name).set(role.metric__community_score())
-    role.metrics['community_survey'].labels('galaxy', role.name).set(role.metric__community_surveys())
-    role.metrics['created'].labels('galaxy', role.name).set(role.metric__created())
-    role.metrics['download'].labels('galaxy', role.name).set(role.metric__downloads())
-    role.metrics['fork'].labels('galaxy', role.name).set(role.metric__forks())
-    role.metrics['imported'].labels('galaxy', role.name).set(role.metric__imported())
-    role.metrics['modified'].labels('galaxy', role.name).set(role.metric__modified())
-    role.metrics['open_issue'].labels('galaxy', role.name).set(role.metric__open_issues())
-    role.metrics['quality_score'].labels('galaxy', role.name).set(role.metric__quality_score())
-    role.metrics['star'].labels('galaxy', role.name).set(role.metric__stars())
+    role.metrics['community_score'].set(role.metric__community_score())
+    role.metrics['community_survey'].set(role.metric__community_surveys())
+    role.metrics['created'].set(role.metric__created())
+    role.metrics['download'].set(role.metric__downloads())
+    role.metrics['fork'].set(role.metric__forks())
+    role.metrics['imported'].set(role.metric__imported())
+    role.metrics['modified'].set(role.metric__modified())
+    role.metrics['open_issue'].set(role.metric__open_issues())
+    role.metrics['quality_score'].set(role.metric__quality_score())
+    role.metrics['star'].set(role.metric__stars())
     role.metrics['version'].info({'version': role.metric__version()})
-    role.metrics['versions'].labels('galaxy', role.name).set(role.metric__versions())
-    role.metrics['watchers'].labels('galaxy', role.name).set(role.metric__watchers())
+    role.metrics['versions'].set(role.metric__versions())
+    role.metrics['watchers'].set(role.metric__watchers())
     return role
 
 
@@ -411,11 +420,11 @@ async def role_community_score(role_name: str, metric: str):
 def update_base_metrics(increment=False):
     if 'version' not in METRICS:
         METRICS['version'] = Info(f'ansible_galaxy_exporter_version',
-            'Current exporter version')
+                                  'Current exporter version')
         METRICS['version'].info({'version': __version__})
     if 'api_call_count' not in METRICS:
         METRICS['api_call_count'] = Counter('ansible_galaxy_exporter_api_call_count',
-            'API calls to Ansible Galaxy')
+                                            'API calls to Ansible Galaxy')
     if increment:
         METRICS['api_call_count'].inc()
 

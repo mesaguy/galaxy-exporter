@@ -16,4 +16,4 @@ RUN apk add --no-cache file gcc libffi-dev make musl-dev openssl-dev && \
 
 USER nobody
 
-CMD ['uvicorn', 'galaxy_exporter.galaxy_exporter:app', '--host=0.0.0.0', '--port=9288']
+CMD ["uvicorn", "galaxy_exporter.galaxy_exporter:app", "--host=0.0.0.0", "--port=9288"]

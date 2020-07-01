@@ -29,9 +29,53 @@ The application can be run locally via:
 
 The most basic usage is the following, which starts the exporter:
 
-    docker run --rm -p 9288:9288 --cap-add=net_raw -it mesaguy/galaxy-exporter
+    docker run --rm -p 9288:9288 -it mesaguy/galaxy-exporter
 
 By default, all Ansible Galaxy results are cached for 15 seconds to ensure Ansible Galaxy isn't polled excessively. This value can be changed with the ```CACHE_SECONDS``` environmental variable. Setting the cache value to ```0``` disables caching completely.
+
+### Kubernetes
+
+The following will can be used to get started. No roles or collections need to be specified:
+
+    ---
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: galaxy-exporter
+      labels:
+        app: galaxy-exporter
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: galaxy-exporter
+      template:
+        metadata:
+          labels:
+            app: galaxy-exporter
+        spec:
+          containers:
+          - name: galaxy-exporter
+            image: mesaguy/galaxy-exporter:latest
+            env:
+             - name: CACHE_SECONDS
+               value: '600'
+            ports:
+            - containerPort: 9288
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: galaxy-exporter
+    spec:
+      ports:
+      - name: http
+        port: 9288
+        protocol: TCP
+        targetPort: 9288
+      selector:
+        app: galaxy-exporter
+      type: LoadBalancer
 
 ## Ansible role metrics
 
