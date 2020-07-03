@@ -8,8 +8,11 @@ install:
   - pip install -e ".[testing]"
 
 script:
-  - pytest --doctest-modules --cov-report=term-missing --cov=galaxy_exporter tests galaxy_exporter
+  - awesome_bot --request-delay 1 --skip-save-results --allow-dupe --white-list=localhost --files $(ls *.md | paste -sd "," -)
+
+  - pytest --doctest-modules --pep8 --cov-report=term-missing --cov=galaxy_exporter tests galaxy_exporter
 
   - coverage report --fail-under=100
 
-  - py.test --pep8
+after_success:
+  - coveralls
