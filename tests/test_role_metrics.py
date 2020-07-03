@@ -5,17 +5,16 @@ import time
 
 
 from fastapi.responses import PlainTextResponse
+from prometheus_client.exposition import generate_latest
 import pytest
 
 
 from galaxy_exporter import __version__
-from galaxy_exporter.galaxy_exporter import METRICS, app
+import galaxy_exporter.galaxy_exporter
+from galaxy_exporter.galaxy_exporter import app, update_base_metrics
+from galaxy_exporter.galaxy_exporter import Role, set_role_metrics
 import tests
 from tests import TEST_ROLE, client
-
-
-from prometheus_client.exposition import generate_latest
-from galaxy_exporter.galaxy_exporter import Role, set_role_metrics
 
 
 @pytest.mark.asyncio
@@ -31,36 +30,64 @@ async def test_role_metrics():
 
 def check_role_response(response):
     # Validate the returned value formats and types
-    assert re.search(r'ansible_galaxy_role_created (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_created'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_community_score (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_community_score'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_community_surveys (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_community_surveys'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_downloads (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_downloads'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_modified (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_modified'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_quality_score (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_quality_score'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_versions (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_versions'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_forks (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_forks'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_imported (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_imported'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_open_issues (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_open_issues'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_stars (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_stars'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_watchers (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_watchers'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_role_version_info{version="[0-9.]*"} (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
+    assert re.search(r'ansible_galaxy_role_version_info'
+                     r'{category="role",maintainer="mesaguy",unit="prometheus",version="[0-9.]*"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
 
 
 def test_role_metrics_equal_probe_role_metrics():
+    update_base_metrics()
     response1 = client.get(f'/role/{TEST_ROLE}/metrics')
+    print(f'Response role metrics text:\n{response1.text}')
     assert response1.status_code == 200
     response2 = client.get(f'/probe?module=role&target={TEST_ROLE}')
     assert response2.status_code == 200
@@ -68,20 +95,23 @@ def test_role_metrics_equal_probe_role_metrics():
     check_role_response(response1)
 
 
-def test_role_metrics():
-    count_before = METRICS['api_call_count']._value.get()
+def test_role_metrics_api_count_increments():
+    update_base_metrics()
+    count_before = galaxy_exporter.galaxy_exporter.METRICS['api_call_count']._value.get()
     response = client.get(f'/role/{TEST_ROLE}/metrics')
-    assert response.status_code == 200
     print(f'Response role metrics text:\n{response.text}')
+    assert response.status_code == 200
     assert len(response.text.split('\n')) == 40
     check_role_response(response)
     # Ensure the API count has increased by 1
-    assert METRICS['api_call_count']._value.get() - count_before == 1
+    assert galaxy_exporter.galaxy_exporter.METRICS['api_call_count']._value.get() - count_before == 1
 
 
 def test_role_metrics_from_cache():
+    update_base_metrics()
     # Test JSON from cache. Cached JSON has 'null' for some fields
     response = client.get(f'/test_role/{TEST_ROLE}/metrics')
+    print(f'Response role metrics text:\n{response.text}')
     assert response.status_code == 200
     check_role_response(response)
 
