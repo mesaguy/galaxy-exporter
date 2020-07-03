@@ -9,4 +9,5 @@ jobs:
           version: 18.09.3
       - run: docker buildx version
       - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - run: apk add make
       - run: make push_multiarch
