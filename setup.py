@@ -39,7 +39,7 @@ setup(
     python_requires='>=3.6',
     extras_require={
         'testing': [
-            'python-coveralls => 2.9.3,<3',
+            'python-coveralls >= 2.9.3,<3',
             'requests >= 2.24.0,<3',
             'pylint >= 2.5.3,<2.6',
             'pytest >= 5.4.3,<6',
