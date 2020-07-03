@@ -1,4 +1,4 @@
-# Alpine based Prometheus exporter of Ansible Galaxy metrics
+# Prometheus exporter of Ansible Galaxy metrics
 
 [![DockerHub Badge](http://dockeri.co/image/mesaguy/galaxy-exporter)](https://hub.docker.com/r/mesaguy/galaxy-exporter)
 
@@ -14,7 +14,7 @@ Runs on port 9288/tcp as the user 'nobody' and daemon logs are send to stdout.
 
 Clone the python code:
 
-    git clone https://github.com/mesaguy/galaxy_exporter.git
+    git clone https://github.com/mesaguy/galaxy-exporter.git
 
 Install:
 
@@ -83,7 +83,7 @@ Make a Ansible Galaxy exporter configuration directory:
 
     mkdir -p /etc/prometheus/galaxy
 
-The Ansible Galaxy exporter uses [Multi Target Exporter](https://prometheus.io/docs/guides/multi-target-exporter) style polling similar to the blackbox-exporter. Multiple roles and collections can be specified as follows:
+The Ansible Galaxy exporter uses [Multi Target Exporter](https://prometheus.io/docs/guides/multi-target-exporter/) style polling similar to the blackbox-exporter. Multiple roles and collections can be specified as follows:
 
 > /etc/prometheus/galaxy/collections.yml
 
