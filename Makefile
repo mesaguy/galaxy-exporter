@@ -1,9 +1,10 @@
 default: build
 
-DOCKER_IMAGE ?= mesaguy/galaxy-exporter
-PYTHON_VERSION ?= python:3.8.3-alpine3.12
-DOCKER_TARGET_REGISTRY ?=
 BUILD_DATE = `date --utc +%Y%m%d`
+DOCKER_BUILDX_ARGS ?=
+DOCKER_IMAGE ?= mesaguy/galaxy-exporter
+DOCKER_PLATFORMS = linux/amd64,linux/arm64,linux/arm/v5,linux/arm/v7,linux/ppc64le,linux/s390x,linux/386
+PYTHON_VERSION ?= python:3.8-alpine
 VERSION = `python -c 'import galaxy_exporter; print(galaxy_exporter.__version__)'`
 
 .PHONY: all build clean
@@ -11,16 +12,33 @@ VERSION = `python -c 'import galaxy_exporter; print(galaxy_exporter.__version__)
 build:
 	docker build --pull \
 		--build-arg PYTHON_VERSION=${PYTHON_VERSION} \
-		--pull \
-		--tag ${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:latest \
-		--tag ${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:${BUILD_DATE} \
-		--tag ${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:${VERSION} \
+		--tag ${DOCKER_IMAGE}:latest \
+		--tag ${DOCKER_IMAGE}:${BUILD_DATE} \
+		--tag ${DOCKER_IMAGE}:${VERSION} \
 		.
 
 push:
 	docker push \
-		${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:latest
+		${DOCKER_IMAGE}:latest
 	docker push \
-		${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:${BUILD_DATE}
+		${DOCKER_IMAGE}:${BUILD_DATE}
 	docker push \
-		${DOCKER_TARGET_REGISTRY}${DOCKER_IMAGE}:${VERSION}
+		${DOCKER_IMAGE}:${VERSION}
+
+
+build_multiarch:
+	docker buildx build --pull --platform ${DOCKER_PLATFORMS} \
+		--build-arg PYTHON_VERSION=${PYTHON_VERSION} \
+		--tag ${DOCKER_IMAGE}:latest \
+		--tag ${DOCKER_IMAGE}:${BUILD_DATE} \
+		--tag ${DOCKER_IMAGE}:${VERSION} \
+        ${DOCKER_BUILDX_ARGS} .
+
+push_multiarch:
+	docker buildx build --pull --platform ${DOCKER_PLATFORMS} \
+		--build-arg PYTHON_VERSION=${PYTHON_VERSION} \
+		--tag ${DOCKER_IMAGE}:latest \
+		--tag ${DOCKER_IMAGE}:${BUILD_DATE} \
+		--tag ${DOCKER_IMAGE}:${VERSION} \
+        --push \
+        ${DOCKER_BUILDX_ARGS} .
