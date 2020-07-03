@@ -3,8 +3,7 @@ default: build
 BUILD_DATE = `date --utc +%Y%m%d`
 DOCKER_BUILDX_ARGS ?=
 DOCKER_IMAGE ?= mesaguy/galaxy-exporter
-#DOCKER_PLATFORMS = linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/ppc64le,linux/s390x,linux/386
-DOCKER_PLATFORMS = linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/s390x,linux/386
+DOCKER_PLATFORMS = linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/ppc64le,linux/s390x,linux/386
 PYTHON_VERSION ?= python:3.8-alpine
 VERSION = `python3 -c 'import galaxy_exporter; print(galaxy_exporter.__version__)'`
 
