@@ -8,7 +8,11 @@ python:
   - "3.8"
 
 install:
+  # Install Python software used for testing
   - pip install -e ".[testing]"
+
+  # Install gems
+  - bundle install
 
 script:
   - awesome_bot --request-delay 1 --skip-save-results --allow-dupe --white-list=localhost --files $(ls *.md | paste -sd "," -)
