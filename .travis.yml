@@ -1,3 +1,6 @@
+---
+env:
+  - HADOLINT_VERSION=1.18.0
 language: python
 python:
   - "3.6"
@@ -13,6 +16,8 @@ script:
   - pytest --doctest-modules --pep8 --cov-report=term-missing --cov=galaxy_exporter tests galaxy_exporter
 
   - coverage report --fail-under=100
+
+  - curl -L "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o hadolint && chmod 0750 hadolint && ./hadolint --ignore=DL3018 Dockerfile
 
 after_success:
   - coveralls
