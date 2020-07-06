@@ -1,12 +1,16 @@
 # Prometheus exporter of Ansible Galaxy metrics
 
-[![DockerHub Badge](http://dockeri.co/image/mesaguy/galaxy-exporter)](https://hub.docker.com/r/mesaguy/galaxy-exporter)
+[![DockerHub Badge](https://dockeri.co/image/mesaguy/galaxy-exporter)](https://hub.docker.com/r/mesaguy/galaxy-exporter)
+
+[![Test Status](https://api.travis-ci.org/mesaguy/galaxy-exporter.svg?branch=master)](https://travis-ci.org/mesaguy/galaxy-exporter) ![Latest tag](https://img.shields.io/github/v/tag/mesaguy/galaxy-exporter) ![MIT License](https://img.shields.io/github/license/mesaguy/galaxy-exporter)
 
 ## Introduction
 
-This container image collects Ansible Galaxy metrics and makes the metrics available via HTTP for Prometheus and very simple collectors.
+This simple daemon collects Ansible Galaxy role and collection metrics. The metrics are made available via HTTP for Prometheus and very simple collectors.
 
 Runs on port 9288/tcp as the user 'nobody' and daemon logs are send to stdout.
+
+One instance of galaxy-exporter can monitor an unlimited number of Ansible Galaxy roles and Collectors.
 
 ## Usage
 
@@ -14,7 +18,7 @@ Runs on port 9288/tcp as the user 'nobody' and daemon logs are send to stdout.
 
 Clone the python code:
 
-    git clone https://github.com/mesaguy/galaxy-exporter.git
+    git clone https://github.com/mesaguy/galaxy-exporter
 
 Install:
 
@@ -185,8 +189,6 @@ To gather just the star count, ```curl localhost:9288/role/dev-sec.ssh-hardening
 
 ### Prometheus role metrics
 
-All Ansible Galaxy metrics are prefixed with ```ansible_galaxy_role```, then have the role's name with all ```.``` and ```-``` characters converted to underscores, then the type of collected data is specified (ie: _stars).
-
 Example Prometheus role metrics from running ```curl localhost:9288/role/dev-sec.ssh-hardening/metrics```:
 
     # HELP ansible_galaxy_role_created Created datetime in epoch format
@@ -259,8 +261,6 @@ A ```curl localhost:9288/collection/community.kubernetes``` returns:
     </html>
 
 ### Prometheus collection metrics
-
-All Ansible Galaxy collection metrics are prefixed with ```ansible_galaxy_collection```, then have the collection's name with all ```.``` and ```-``` characters converted to underscores, then the type of collected data is specified (ie: _downloads).
 
 Example Prometheus metrics from running ```localhost:9288/collection/community.kubernetes/metrics```:
 
