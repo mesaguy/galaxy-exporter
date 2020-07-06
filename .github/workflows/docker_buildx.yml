@@ -1,10 +1,10 @@
-name: buildx
+---
+name: 'docker buildx'
 
 on:
-  pull_request:
-    branches: master
   push:
-    branches: master
+    tags:
+      - refs/tags/*
 
 jobs:
   buildx:
