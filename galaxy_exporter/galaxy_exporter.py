@@ -1,6 +1,8 @@
 """ Gather role statistics from Ansible Galaxy
 """
 
+# pylint: disable=R0201
+
 import asyncio
 from datetime import datetime
 import json
@@ -243,6 +245,11 @@ class Collection(GalaxyData):
         return str(score)
 
     def url(self):
+        """ URL of API data for this collection
+
+        Returns:
+            str URL for fetching API data
+        """
         return 'https://galaxy.ansible.com/api/internal/ui/collections/' \
             f'{self.maintainer}/{self.collection}/?format=json'
 
@@ -253,6 +260,14 @@ class Collection(GalaxyData):
         return str(len(self.data['all_versions']))
 
     def _setup_metrics(self):
+        """ Configures Prometheus metrics for this collection.
+        Metrics should only be setup when this class is initialized. Metrics
+        are stored in the 'metrics' class attribute and can be updated over
+        time
+
+        Returns:
+            Dict containing Prometheus metrics for this collection
+        """
         metric_prefix = 'ansible_galaxy_collection_'
         metrics = self._setup_generic_metrics(metric_prefix)
         metrics.update(dict(
@@ -270,11 +285,24 @@ class Role(GalaxyData):
         super().__init__(name)
 
     def url(self):
+        """ URL of API data for this role
+
+        Returns:
+            str URL for fetching API data
+        """
         return 'https://galaxy.ansible.com/api/internal/ui/' \
             'repo-or-collection-detail/?format=json&namespace=' \
             f'{self.maintainer}&name={self.role}'
 
     def _setup_metrics(self):
+        """ Configures Prometheus metrics for this role.
+        Metrics should only be setup when this class is initialized. Metrics
+        are stored in the 'metrics' class attribute and can be updated over
+        time
+
+        Returns:
+            Dict containing Prometheus metrics for this role
+        """
         metric_prefix = 'ansible_galaxy_role_'
         metrics = self._setup_generic_metrics(metric_prefix)
         metrics.update(dict(
@@ -293,32 +321,75 @@ class Role(GalaxyData):
         return metrics
 
     def metric__quality_score(self):
+        """ Metric representing the Ansible Galaxy quality score for this role
+
+        Returns:
+            str float representing the Ansible Galaxy score
+        """
         score = self.data['quality_score']
         if score is None:
             return '0'
         return str(score)
 
     def metric__forks(self):
+        """ Metric representing the total number of Github forks for this role
+
+        Returns:
+            str integer representing the total number of Github forks
+        """
         return str(self.data['forks_count'])
 
     def metric__imported(self):
+        """ Metric representing the epoch time this role was last imported into
+        Ansible Galaxy
+
+        Returns:
+            str integer representing the epoch time of last Ansible Galaxy
+            import
+        """
         return str(dateparse(
             self.data['summary_fields']['latest_import']['finished'])
                    .strftime('%s'))
 
     def metric__open_issues(self):
+        """ Metric representing the total number of Github open issues for this
+        role
+
+        Returns:
+            str integer representing the total number of Github open issues
+        """
         return str(self.data['open_issues_count'])
 
     def metric__stars(self):
+        """ Metric representing the total number of Github stars for this role
+
+        Returns:
+            str integer representing the total number of Github stars
+        """
         return str(self.data['stargazers_count'])
 
     def metric__watchers(self):
+        """ Metric representing the total Ansible Galaxy watchers for this role
+
+        Returns:
+            str integer representing the total number Ansible Galaxy watchers
+        """
         return str(self.data['watchers_count'])
 
     def metric__version(self):
+        """ Metric representing this role's current version
+
+        Returns:
+            str of the role's current version
+        """
         return self.data['summary_fields']['versions'][0]['version']
 
     def metric__versions(self):
+        """ Metric representing this role's total number of releases (versions)
+
+        Returns:
+            str integer representing the number of releases
+        """
         return str(len(self.data['summary_fields']['versions']))
 
 
@@ -343,7 +414,16 @@ async def fetch_from_url(url, job, instance):
     return None
 
 
-def set_collection_metrics(collection):
+def set_collection_metrics(collection: Collection):
+    """ Set Prometheus metrics on the supplied 'Collection' instance based on
+    metrics defined within the 'Collection' instance
+
+    Args:
+        collection: 'Collection' class instance
+
+    Returns:
+        The supplied 'Collection' class instance
+    """
     collection.metrics['community_score'].labels(**collection.labels)\
         .set(collection.metric__community_score())
     collection.metrics['community_survey'].labels(**collection.labels)\
@@ -361,7 +441,16 @@ def set_collection_metrics(collection):
     return collection
 
 
-def set_role_metrics(role):
+def set_role_metrics(role: Role):
+    """ Set Prometheus metrics on the supplied 'Role' instance based on metrics
+    defined within the 'Role' instance
+
+    Args:
+        role: 'Role' class instance
+
+    Returns:
+        The supplied 'Role' class instance
+    """
     role.metrics['community_score'].labels(**role.labels).set(role.metric__community_score())
     role.metrics['community_survey'].labels(**role.labels).set(role.metric__community_surveys())
     role.metrics['created'].labels(**role.labels).set(role.metric__created())
@@ -439,6 +528,14 @@ async def role_community_score(role_name: str, metric: str):
 
 
 def update_base_metrics(increment=False):
+    """ Update this exporter's own Prometheus metrics
+
+    Args:
+        increment: Increment the count of total Ansible Galaxy API calls by one
+
+    Returns:
+        Dict containing base metrics
+    """
     if 'version' not in METRICS:
         METRICS['version'] = Info('ansible_galaxy_exporter_version',
                                   'Current exporter version')
@@ -451,7 +548,15 @@ def update_base_metrics(increment=False):
     return METRICS
 
 
-async def get_collection(collection_name):
+async def get_collection(collection_name: str):
+    """ Fetch collection information and populate a Collection instance
+
+    Args:
+        collection_name: The name of a collection, in author.project format
+
+    Returns:
+        A 'Collection' class instance
+    """
     update_base_metrics(increment=True)
     if collection_name not in COLLECTIONS:
         COLLECTIONS[collection_name] = Collection(collection_name)
@@ -462,7 +567,15 @@ async def get_collection(collection_name):
     return collection
 
 
-async def get_role(role_name):
+async def get_role(role_name: str):
+    """ Fetch role information and populate a Role instance
+
+    Args:
+        role_name: The name of a role, in author.project format
+
+    Returns:
+        A 'Role' class instance
+    """
     update_base_metrics(increment=True)
     if role_name not in ROLES:
         ROLES[role_name] = Role(role_name)
