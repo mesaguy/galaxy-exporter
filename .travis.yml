@@ -17,7 +17,7 @@ install:
 script:
   - awesome_bot --request-delay 1 --skip-save-results --allow-dupe --white-list=localhost --files $(ls *.md | paste -sd "," -)
 
-  - pytest --doctest-modules --pep8 --cov-report=term-missing --cov=galaxy_exporter tests galaxy_exporter
+  - pytest --doctest-modules --pylint --pep8 --cov-report=term-missing --cov=galaxy_exporter tests galaxy_exporter
 
   - coverage report --fail-under=100
 
