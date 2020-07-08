@@ -146,6 +146,8 @@ ROOT_HTML = f"""<html>
 class GalaxyData:
     def __init__(self, name):
         self.name = name
+        if not hasattr(self, 'labels'):
+            self.labels = dict()
         self.registry = CollectorRegistry()
         self.metrics = self._setup_metrics()
         self.data = dict()
@@ -228,7 +230,7 @@ class Collection(GalaxyData):
     def __init__(self, name):
         self.maintainer, self.collection = name.split('.', 2)
         self.labels = dict(category='collection', maintainer=self.maintainer,
-                           unit=self.collection)
+                           project=self.collection)
         super().__init__(name)
 
     def metric__dependencies(self):
@@ -264,7 +266,7 @@ class Role(GalaxyData):
     def __init__(self, name):
         self.maintainer, self.role = name.split('.', 2)
         self.labels = dict(category='role', maintainer=self.maintainer,
-                           unit=self.role)
+                           project=self.role)
         super().__init__(name)
 
     def url(self):
@@ -342,14 +344,19 @@ async def fetch_from_url(url, job, instance):
 
 
 def set_collection_metrics(collection):
-    collection.metrics['community_score'].labels(**collection.labels).set(collection.metric__community_score())
-    collection.metrics['community_survey'].labels(**collection.labels).set(collection.metric__community_surveys())
+    collection.metrics['community_score'].labels(**collection.labels)\
+        .set(collection.metric__community_score())
+    collection.metrics['community_survey'].labels(**collection.labels)\
+        .set(collection.metric__community_surveys())
     collection.metrics['created'].labels(**collection.labels).set(collection.metric__created())
-    collection.metrics['dependency'].labels(**collection.labels).set(collection.metric__dependencies())
+    collection.metrics['dependency'].labels(**collection.labels)\
+        .set(collection.metric__dependencies())
     collection.metrics['download'].labels(**collection.labels).set(collection.metric__downloads())
     collection.metrics['modified'].labels(**collection.labels).set(collection.metric__modified())
-    collection.metrics['quality_score'].labels(**collection.labels).set(collection.metric__quality_score())
-    collection.metrics['version'].labels(**collection.labels).info({'version': collection.metric__version()})
+    collection.metrics['quality_score'].labels(**collection.labels)\
+        .set(collection.metric__quality_score())
+    collection.metrics['version'].labels(**collection.labels)\
+        .info({'version': collection.metric__version()})
     collection.metrics['versions'].labels(**collection.labels).set(collection.metric__versions())
     return collection
 
