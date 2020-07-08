@@ -31,55 +31,55 @@ async def test_role_metrics():
 def check_role_response(response):
     # Validate the returned value formats and types
     assert re.search(r'ansible_galaxy_role_created'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_community_score'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_community_surveys'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_downloads'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_modified'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_quality_score'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_versions'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_forks'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_imported'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_open_issues'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_stars'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_watchers'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_role_version_info'
-                     r'{category="role",maintainer="mesaguy",unit="prometheus",version="[0-9.]*"} '
+                     r'{category="role",maintainer="mesaguy",project="prometheus",version="[0-9.]*"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
 

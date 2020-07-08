@@ -29,39 +29,39 @@ async def test_collection_metrics():
 def check_collection_response(response):
     # Validate the returned value formats and types
     assert re.search(r'ansible_galaxy_collection_created'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_community_score'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_community_surveys'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_downloads'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_modified'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_quality_score'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_version_info'
-                     r'{category="collection",maintainer="community",unit="kubernetes",version="[0-9.a-z]*"} '
+                     r'{category="collection",maintainer="community",project="kubernetes",version="[0-9.a-z]*"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_versions'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_collection_dependencies'
-                     r'{category="collection",maintainer="community",unit="kubernetes"} '
+                     r'{category="collection",maintainer="community",project="kubernetes"} '
                      r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
 
