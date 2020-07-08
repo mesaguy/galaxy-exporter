@@ -39,14 +39,14 @@ setup(
     python_requires='>=3.6',
     extras_require={
         'testing': [
-            'python-coveralls >= 2.9.3,<3',
-            'requests >= 2.24.0,<3',
             'pylint >= 2.5.3,<2.6',
             'pytest >= 5.4.3,<6',
             'pytest-asyncio >= 0.11.0,<1',
             'pytest-cov >= 2.10.0,<3',
             'pytest-pep8 >= 1.0.6,<2',
             'pytest-pylint >= 0.17.0',
+            'python-coveralls >= 2.9.3,<3',
+            'requests >= 2.24.0,<3',
         ]
     },
     url='https://github.com/mesaguy/galaxy-exporter',
