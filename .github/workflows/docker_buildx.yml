@@ -4,7 +4,7 @@ name: 'docker buildx'
 on:
   push:
     tags:
-      - refs/tags/*
+      - '*'
 
 jobs:
   buildx:
