@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.0-alpha.7] - 2020-07-17
 ### Added
 - Type definitions for most function and method variables
-- [Mypy](https://pypi.org/project/mypy) tests
+- [Mypy](https://pypi.org/project/mypy/) tests
 
 ### Changed
 - Completed docstring documentation
