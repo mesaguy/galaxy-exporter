@@ -8,7 +8,7 @@
 
 This simple daemon collects Ansible Galaxy role and collection metrics. The metrics are made available via HTTP for Prometheus and very simple collectors.
 
-Runs on port 9288/tcp as the user 'nobody' and daemon logs are send to stdout.
+Runs on port 9654/tcp as the user 'nobody' and daemon logs are send to stdout.
 
 One instance of galaxy-exporter can monitor an unlimited number of Ansible Galaxy roles and Collectors.
 
@@ -27,13 +27,13 @@ Install:
 
 The application can be run locally via:
 
-    uvicorn galaxy_exporter.galaxy_exporter:app --port 9288 --reload
+    uvicorn galaxy_exporter.galaxy_exporter:app --port 9654 --reload
 
 ### Docker
 
 The most basic usage is the following, which starts the exporter:
 
-    docker run --rm -p 9288:9288 -it mesaguy/galaxy-exporter
+    docker run --rm -p 9654:9654 -it mesaguy/galaxy-exporter
 
 By default, all Ansible Galaxy results are cached for 15 seconds to ensure Ansible Galaxy isn't polled excessively. This value can be changed with the ```CACHE_SECONDS``` environmental variable. Setting the cache value to ```0``` disables caching completely.
 
@@ -65,7 +65,7 @@ The following will can be used to get started. No roles or collections need to b
              - name: CACHE_SECONDS
                value: '600'
             ports:
-            - containerPort: 9288
+            - containerPort: 9654
     ---
     apiVersion: v1
     kind: Service
@@ -74,9 +74,9 @@ The following will can be used to get started. No roles or collections need to b
     spec:
       ports:
       - name: http
-        port: 9288
+        port: 9654
         protocol: TCP
-        targetPort: 9288
+        targetPort: 9654
       selector:
         app: galaxy-exporter
       type: LoadBalancer
@@ -109,7 +109,7 @@ Add a configuration like the following to your Prometheus configuration file. Re
     - job_name: galaxy
       static_configs:
       - targets:
-        - ansible-galaxy-host:9288
+        - ansible-galaxy-host:9654
 
     # Ansible Galaxy Exporter - Collections
     - job_name: galaxy.collection
@@ -127,7 +127,7 @@ Add a configuration like the following to your Prometheus configuration file. Re
       - source_labels:
         - __param_target
         target_label: instance
-      - replacement: ansible-galaxy-host:9288
+      - replacement: ansible-galaxy-host:9654
         target_label: __address__
       scrape_interval: 60s
 
@@ -147,13 +147,13 @@ Add a configuration like the following to your Prometheus configuration file. Re
       - source_labels:
         - __param_target
         target_label: instance
-      - replacement: ansible-galaxy-host:9288
+      - replacement: ansible-galaxy-host:9654
         target_label: __address__
       scrape_interval: 60s
 
 ## Ansible role metrics
 
-A ```curl localhost:9288/role/dev-sec.ssh-hardening``` returns:
+A ```curl localhost:9654/role/dev-sec.ssh-hardening``` returns:
 
     <html>
         <head>
@@ -185,11 +185,11 @@ A ```curl localhost:9288/role/dev-sec.ssh-hardening``` returns:
         </body>
     </html>
 
-To gather just the star count, ```curl localhost:9288/role/dev-sec.ssh-hardening/stars``` returns ```663```. Note that the result has no trailing newline. These simple metrics are useful for polling from simple devices like Arduinos.
+To gather just the star count, ```curl localhost:9654/role/dev-sec.ssh-hardening/stars``` returns ```663```. Note that the result has no trailing newline. These simple metrics are useful for polling from simple devices like Arduinos.
 
 ### Prometheus role metrics
 
-Example Prometheus role metrics from running ```curl localhost:9288/role/dev-sec.ssh-hardening/metrics```:
+Example Prometheus role metrics from running ```curl localhost:9654/role/dev-sec.ssh-hardening/metrics```:
 
     # HELP ansible_galaxy_role_created Created datetime in epoch format
     # TYPE ansible_galaxy_role_created gauge
@@ -233,7 +233,7 @@ Example Prometheus role metrics from running ```curl localhost:9288/role/dev-sec
 
 ## Ansible collection metrics
 
-A ```curl localhost:9288/collection/community.kubernetes``` returns:
+A ```curl localhost:9654/collection/community.kubernetes``` returns:
 
     <html>
         <head>
@@ -262,7 +262,7 @@ A ```curl localhost:9288/collection/community.kubernetes``` returns:
 
 ### Prometheus collection metrics
 
-Example Prometheus metrics from running ```localhost:9288/collection/community.kubernetes/metrics```:
+Example Prometheus metrics from running ```localhost:9654/collection/community.kubernetes/metrics```:
 
     # HELP ansible_galaxy_collection_created Created datetime in epoch format
     # TYPE ansible_galaxy_collection_created gauge
