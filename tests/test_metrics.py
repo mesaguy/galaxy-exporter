@@ -17,5 +17,5 @@ def test_role_metrics():
                      response.text.strip('\n'))
     assert re.search(r'ansible_galaxy_exporter_api_call_count_total (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
                      response.text.strip('\n'))
-    assert re.search(r'ansible_galaxy_exporter_version_info{version=\"[0-9.a-z]*\"} (\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?',
-                     response.text.strip('\n'))
+    assert re.search(r'ansible_galaxy_exporter_version_info{version=\"[0-9.a-z-]*\"} '
+                     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?', response.text.strip('\n'))
