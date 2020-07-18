@@ -1,4 +1,4 @@
-# Prometheus exporter of Ansible Galaxy metrics
+# Prometheus exporter of Ansible Galaxy role and collection metrics
 
 [![DockerHub Badge](https://dockeri.co/image/mesaguy/galaxy-exporter)](https://hub.docker.com/r/mesaguy/galaxy-exporter)
 
@@ -6,17 +6,17 @@
 
 ## Introduction
 
-This simple daemon collects Ansible Galaxy role and collection metrics. The metrics are made available via HTTP for Prometheus and very simple collectors.
+This simple daemon collects [Ansible Galaxy](https://galaxy.ansible.com) role and collection metrics. The metrics are made available via HTTP for [Prometheus](https://prometheus.io) and very simple collectors.
 
 Runs on port 9654/tcp as the user 'nobody' and daemon logs are send to stdout.
 
-One instance of galaxy-exporter can monitor an unlimited number of Ansible Galaxy roles and Collectors.
+One instance of galaxy-exporter can monitor an unlimited number of [Ansible Galaxy](https://galaxy.ansible.com) roles and collectors.
 
 ## Usage
 
 ### Basic install
 
-Clone the python code:
+Clone the *galaxy-exporter* git repository:
 
     git clone https://github.com/mesaguy/galaxy-exporter
 
@@ -25,17 +25,17 @@ Install:
     cd galaxy_exporter
     ./setup.py install
 
-The application can be run locally via:
+*galaxy-exporter* can be run locally via:
 
     uvicorn galaxy_exporter.galaxy_exporter:app --port 9654 --reload
 
 ### Docker
 
-The most basic usage is the following, which starts the exporter:
+Run *galaxy-exporter* simply:
 
     docker run --rm -p 9654:9654 -it mesaguy/galaxy-exporter
 
-By default, all Ansible Galaxy results are cached for 15 seconds to ensure Ansible Galaxy isn't polled excessively. This value can be changed with the ```CACHE_SECONDS``` environmental variable. Setting the cache value to ```0``` disables caching completely.
+By default, all Ansible Galaxy results are cached for 15 seconds to ensure Ansible Galaxy isn't polled excessively. This value can be changed with the ```CACHE_SECONDS``` environmental variable. Setting the cache value to ```0``` disables caching.
 
 ### Kubernetes
 
@@ -83,11 +83,11 @@ The following will can be used to get started. No roles or collections need to b
 
 ### Prometheus server configuration
 
-Make a Ansible Galaxy exporter configuration directory:
+Make a *galaxy-exporter* configuration directory:
 
     mkdir -p /etc/prometheus/galaxy
 
-The Ansible Galaxy exporter uses [Multi Target Exporter](https://prometheus.io/docs/guides/multi-target-exporter/) style polling similar to the blackbox-exporter. Multiple roles and collections can be specified as follows:
+The *galaxy-exporter* uses [Multi Target Exporter](https://prometheus.io/docs/guides/multi-target-exporter/) style polling similar to the blackbox-exporter. Multiple roles and collections can be specified as follows:
 
 > /etc/prometheus/galaxy/collections.yml
 
@@ -193,43 +193,43 @@ Example Prometheus role metrics from running ```curl localhost:9654/role/dev-sec
 
     # HELP ansible_galaxy_role_created Created datetime in epoch format
     # TYPE ansible_galaxy_role_created gauge
-    ansible_galaxy_role_created{category="role",maintainer="dev-sec",unit="ssh-hardening"} 1.46392447e+09
+    ansible_galaxy_role_created{category="role",maintainer="dev-sec",project="ssh-hardening"} 1.46392447e+09
     # HELP ansible_galaxy_role_community_score Community score
     # TYPE ansible_galaxy_role_community_score gauge
-    ansible_galaxy_role_community_score{category="role",maintainer="dev-sec",unit="ssh-hardening"} 5.0
+    ansible_galaxy_role_community_score{category="role",maintainer="dev-sec",project="ssh-hardening"} 5.0
     # HELP ansible_galaxy_role_community_surveys Community surveys
     # TYPE ansible_galaxy_role_community_surveys gauge
-    ansible_galaxy_role_community_surveys{category="role",maintainer="dev-sec",unit="ssh-hardening"} 1.0
+    ansible_galaxy_role_community_surveys{category="role",maintainer="dev-sec",project="ssh-hardening"} 1.0
     # HELP ansible_galaxy_role_downloads Download count
     # TYPE ansible_galaxy_role_downloads gauge
-    ansible_galaxy_role_downloads{category="role",maintainer="dev-sec",unit="ssh-hardening"} 389480.0
+    ansible_galaxy_role_downloads{category="role",maintainer="dev-sec",project="ssh-hardening"} 389480.0
     # HELP ansible_galaxy_role_modified Modified datetime in epoch format
     # TYPE ansible_galaxy_role_modified gauge
-    ansible_galaxy_role_modified{category="role",maintainer="dev-sec",unit="ssh-hardening"} 1.593743716e+09
+    ansible_galaxy_role_modified{category="role",maintainer="dev-sec",project="ssh-hardening"} 1.593743716e+09
     # HELP ansible_galaxy_role_quality_score Quality score
     # TYPE ansible_galaxy_role_quality_score gauge
-    ansible_galaxy_role_quality_score{category="role",maintainer="dev-sec",unit="ssh-hardening"} 4.75
+    ansible_galaxy_role_quality_score{category="role",maintainer="dev-sec",project="ssh-hardening"} 4.75
     # HELP ansible_galaxy_role_version_info Current release version
     # TYPE ansible_galaxy_role_version_info gauge
-    ansible_galaxy_role_version_info{category="role",maintainer="dev-sec",unit="ssh-hardening",version="9.2.0"} 1.0
+    ansible_galaxy_role_version_info{category="role",maintainer="dev-sec",project="ssh-hardening",version="9.2.0"} 1.0
     # HELP ansible_galaxy_role_versions Version count
     # TYPE ansible_galaxy_role_versions gauge
-    ansible_galaxy_role_versions{category="role",maintainer="dev-sec",unit="ssh-hardening"} 31.0
+    ansible_galaxy_role_versions{category="role",maintainer="dev-sec",project="ssh-hardening"} 31.0
     # HELP ansible_galaxy_role_forks Fork count
     # TYPE ansible_galaxy_role_forks gauge
-    ansible_galaxy_role_forks{category="role",maintainer="dev-sec",unit="ssh-hardening"} 190.0
+    ansible_galaxy_role_forks{category="role",maintainer="dev-sec",project="ssh-hardening"} 190.0
     # HELP ansible_galaxy_role_imported Imported datetime in epoch format
     # TYPE ansible_galaxy_role_imported gauge
-    ansible_galaxy_role_imported{category="role",maintainer="dev-sec",unit="ssh-hardening"} 1.593555814e+09
+    ansible_galaxy_role_imported{category="role",maintainer="dev-sec",project="ssh-hardening"} 1.593555814e+09
     # HELP ansible_galaxy_role_open_issues Open Issues count
     # TYPE ansible_galaxy_role_open_issues gauge
-    ansible_galaxy_role_open_issues{category="role",maintainer="dev-sec",unit="ssh-hardening"} 10.0
+    ansible_galaxy_role_open_issues{category="role",maintainer="dev-sec",project="ssh-hardening"} 10.0
     # HELP ansible_galaxy_role_stars Stars count
     # TYPE ansible_galaxy_role_stars gauge
-    ansible_galaxy_role_stars{category="role",maintainer="dev-sec",unit="ssh-hardening"} 668.0
+    ansible_galaxy_role_stars{category="role",maintainer="dev-sec",project="ssh-hardening"} 668.0
     # HELP ansible_galaxy_role_watchers Watcher count
     # TYPE ansible_galaxy_role_watchers gauge
-    ansible_galaxy_role_watchers{category="role",maintainer="dev-sec",unit="ssh-hardening"} 56.0
+    ansible_galaxy_role_watchers{category="role",maintainer="dev-sec",project="ssh-hardening"} 56.0
 
 ## Ansible collection metrics
 
@@ -262,35 +262,35 @@ A ```curl localhost:9654/collection/community.kubernetes``` returns:
 
 ### Prometheus collection metrics
 
-Example Prometheus metrics from running ```localhost:9654/collection/community.kubernetes/metrics```:
+Example Prometheus metrics from running ```curl localhost:9654/collection/community.kubernetes/metrics```:
 
     # HELP ansible_galaxy_collection_created Created datetime in epoch format
     # TYPE ansible_galaxy_collection_created gauge
-    ansible_galaxy_collection_created{category="collection",maintainer="community",unit="kubernetes"} 1.58089728e+09
+    ansible_galaxy_collection_created{category="collection",maintainer="community",project="kubernetes"} 1.58089728e+09
     # HELP ansible_galaxy_collection_community_score Community score
     # TYPE ansible_galaxy_collection_community_score gauge
-    ansible_galaxy_collection_community_score{category="collection",maintainer="community",unit="kubernetes"} 0.0
+    ansible_galaxy_collection_community_score{category="collection",maintainer="community",project="kubernetes"} 0.0
     # HELP ansible_galaxy_collection_community_surveys Community surveys
     # TYPE ansible_galaxy_collection_community_surveys gauge
-    ansible_galaxy_collection_community_surveys{category="collection",maintainer="community",unit="kubernetes"} 0.0
+    ansible_galaxy_collection_community_surveys{category="collection",maintainer="community",project="kubernetes"} 0.0
     # HELP ansible_galaxy_collection_downloads Download count
     # TYPE ansible_galaxy_collection_downloads gauge
-    ansible_galaxy_collection_downloads{category="collection",maintainer="community",unit="kubernetes"} 360534.0
+    ansible_galaxy_collection_downloads{category="collection",maintainer="community",project="kubernetes"} 360534.0
     # HELP ansible_galaxy_collection_modified Modified datetime in epoch format
     # TYPE ansible_galaxy_collection_modified gauge
-    ansible_galaxy_collection_modified{category="collection",maintainer="community",unit="kubernetes"} 1.593619976e+09
+    ansible_galaxy_collection_modified{category="collection",maintainer="community",project="kubernetes"} 1.593619976e+09
     # HELP ansible_galaxy_collection_quality_score Quality score
     # TYPE ansible_galaxy_collection_quality_score gauge
-    ansible_galaxy_collection_quality_score{category="collection",maintainer="community",unit="kubernetes"} 0.0
+    ansible_galaxy_collection_quality_score{category="collection",maintainer="community",project="kubernetes"} 0.0
     # HELP ansible_galaxy_collection_version_info Current release version
     # TYPE ansible_galaxy_collection_version_info gauge
-    ansible_galaxy_collection_version_info{category="collection",maintainer="community",unit="kubernetes",version="0.11.1"} 1.0
+    ansible_galaxy_collection_version_info{category="collection",maintainer="community",project="kubernetes",version="0.11.1"} 1.0
     # HELP ansible_galaxy_collection_versions Version count
     # TYPE ansible_galaxy_collection_versions gauge
-    ansible_galaxy_collection_versions{category="collection",maintainer="community",unit="kubernetes"} 4.0
+    ansible_galaxy_collection_versions{category="collection",maintainer="community",project="kubernetes"} 4.0
     # HELP ansible_galaxy_collection_dependencies Dependency count
     # TYPE ansible_galaxy_collection_dependencies gauge
-    ansible_galaxy_collection_dependencies{category="collection",maintainer="community",unit="kubernetes"} 0.0
+    ansible_galaxy_collection_dependencies{category="collection",maintainer="community",project="kubernetes"} 0.0
 
 ## License
 MIT
@@ -298,5 +298,4 @@ See the [LICENSE](https://github.com/mesaguy/galaxy-exporter/blob/master/LICENSE
 
 ## Author Information
 Mesaguy
- - https://mesaguy.com
- - https://github.com/mesaguy/galaxy-exporter
+ - https://github.com/mesaguy
