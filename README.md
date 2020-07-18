@@ -2,7 +2,7 @@
 
 [![DockerHub Badge](https://dockeri.co/image/mesaguy/galaxy-exporter)](https://hub.docker.com/r/mesaguy/galaxy-exporter)
 
-[![Test Status](https://api.travis-ci.org/mesaguy/galaxy-exporter.svg?branch=master)](https://travis-ci.org/mesaguy/galaxy-exporter) ![Latest tag](https://img.shields.io/github/v/tag/mesaguy/galaxy-exporter) ![MIT License](https://img.shields.io/github/license/mesaguy/galaxy-exporter)
+[![Test Status](https://api.travis-ci.org/mesaguy/galaxy-exporter.svg?branch=master)](https://travis-ci.org/mesaguy/galaxy-exporter) [![codecov](https://codecov.io/gh/mesaguy/galaxy-exporter/branch/master/graph/badge.svg)](https://codecov.io/gh/mesaguy/galaxy-exporter) ![Latest tag](https://img.shields.io/github/v/tag/mesaguy/galaxy-exporter) ![MIT License](https://img.shields.io/github/license/mesaguy/galaxy-exporter)
 
 ## Introduction
 

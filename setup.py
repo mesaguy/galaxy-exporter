@@ -39,10 +39,8 @@ setup(
     python_requires='>=3.6',
     extras_require={
         'testing': [
-            # Coveralls
-            'coverage >= 4.5.4,<5',# NHold back to v4 for python-coveralls
-            'python-coveralls >= 2.9.3,<3',
             # Codecov
+            'coverage >= 5.2,<6',
             'codecov >= 2.1.8<3',
             # Testing
             'mypy >= 0.782,<1',
