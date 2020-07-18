@@ -31,7 +31,7 @@ setup(
         'prometheus_client >= 0.8.0,<1',
         'python-dateutil >= 2.8.1',
         'tenacity >= 6.2.0,<7',
-        'uvicorn >= 0.11.5,<1',
+        'uvicorn >= 0.11.6,<1',
         ],
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
@@ -39,6 +39,10 @@ setup(
     python_requires='>=3.6',
     extras_require={
         'testing': [
+            # Coveralls
+            'coverage >= 4.5.4,<5',# NHold back to v4 for python-coveralls
+            'python-coveralls >= 2.9.3,<3',
+            # Testing
             'mypy >= 0.782,<1',
             'pylint >= 2.5.3,<2.6',
             'pytest >= 5.4.3,<6',
@@ -46,7 +50,6 @@ setup(
             'pytest-cov >= 2.10.0,<3',
             'pytest-pep8 >= 1.0.6,<2',
             'pytest-pylint >= 0.17.0',
-            'python-coveralls >= 2.9.3,<3',
             'requests >= 2.24.0,<3',
         ]
     },
