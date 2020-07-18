@@ -42,6 +42,8 @@ setup(
             # Coveralls
             'coverage >= 4.5.4,<5',# NHold back to v4 for python-coveralls
             'python-coveralls >= 2.9.3,<3',
+            # Codecov
+            'codecov >= 2.1.8<3',
             # Testing
             'mypy >= 0.782,<1',
             'pylint >= 2.5.3,<2.6',
