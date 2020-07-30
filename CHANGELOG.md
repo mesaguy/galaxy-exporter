@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2020-07-30
+### Added
+- Sample Grafana graphs
+
+### Changed
+- Upgrade FastAPI from v0.59.0 to v0.60.1
+- Upgrade uvicorn from 0.11.6 to 0.11.7
+
 ## [0.5.0] - 2020-07-17
 ### Changed
 - Tag first stable release

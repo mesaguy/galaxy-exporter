@@ -26,12 +26,12 @@ setup(
         'aiodns >= 2.0.0,<3',
         # For API calls to Ansible Galaxy
         'aiohttp >= 3.6.2,<4',
-        'fastapi >= 0.59.0,<1',
+        'fastapi >= 0.60.1,<1',
         # For exporting Prometheus metrics
         'prometheus_client >= 0.8.0,<1',
         'python-dateutil >= 2.8.1',
         'tenacity >= 6.2.0,<7',
-        'uvicorn >= 0.11.6,<1',
+        'uvicorn >= 0.11.7,<1',
         ],
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
