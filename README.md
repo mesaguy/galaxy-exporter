@@ -12,6 +12,17 @@ Runs on port 9654/tcp as the user 'nobody' and daemon logs are send to stdout.
 
 One instance of galaxy-exporter can monitor an unlimited number of [Ansible Galaxy](https://galaxy.ansible.com) roles and collectors.
 
+## Sample Grafana graphs
+- Sample Ansible Collection and Role Grafana graph definitions can be found [here](https://github.com/mesaguy/galaxy-exporter/tree/master/dashboards/grafana)
+
+### Ansible collection Grafana screenshot
+[Ansible collection Grafana dashboard](https://grafana.com/grafana/dashboards/12709)
+![Ansible collection Grafana screenshot](https://grafana.com/api/dashboards/12709/images/8614/image)
+
+### Ansible role Grafana screenshot
+[Ansible role Grafana dashboard](https://grafana.com/grafana/dashboards/12710)
+![Ansible role Grafana screenshot](https://grafana.com/api/dashboards/12710/images/8615/image)
+
 ## Usage
 
 ### Basic install
@@ -110,7 +121,7 @@ Add a configuration like the following to your Prometheus configuration file. Re
       static_configs:
       - targets:
         - ansible-galaxy-host:9654
-
+    
     # Ansible Galaxy Exporter - Collections
     - job_name: galaxy.collection
       file_sd_configs:
@@ -130,7 +141,7 @@ Add a configuration like the following to your Prometheus configuration file. Re
       - replacement: ansible-galaxy-host:9654
         target_label: __address__
       scrape_interval: 60s
-
+    
     # Ansible Galaxy Exporter - Roles
     - job_name: galaxy.role
       file_sd_configs:
