@@ -26,12 +26,12 @@ setup(
         'aiodns >= 2.0.0,<3',
         # For API calls to Ansible Galaxy
         'aiohttp >= 3.6.2,<4',
-        'fastapi >= 0.60.1,<1',
+        'fastapi >= 0.60.2,<1',
         # For exporting Prometheus metrics
         'prometheus_client >= 0.8.0,<1',
         'python-dateutil >= 2.8.1',
         'tenacity >= 6.2.0,<7',
-        'uvicorn >= 0.11.7,<1',
+        'uvicorn >= 0.11.8,<1',
         ],
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
@@ -50,7 +50,9 @@ setup(
             'pytest-cov >= 2.10.0,<3',
             'pytest-pep8 >= 1.0.6,<2',
             'pytest-pylint >= 0.17.0',
+            'pytest_docker_tools >= 0.2.2,<1',
             'requests >= 2.24.0,<3',
+            'testinfra >= 5.2.2,<6',
         ]
     },
     url='https://github.com/mesaguy/galaxy-exporter',
