@@ -7,6 +7,9 @@ python:
   - "3.7"
   - "3.8"
 
+services:
+  - docker
+
 install:
   # Install Python software used for testing
   - pip install -e ".[testing]"
@@ -23,7 +26,9 @@ script:
 
   - coverage report --fail-under=100
 
-  - curl -L "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o hadolint && chmod 0750 hadolint && ./hadolint --ignore=DL3018 Dockerfile
+  - curl -L "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o hadolint
+    && chmod 0750 hadolint
+    && ./hadolint --ignore=DL3018 Dockerfile
 
 after_success:
   - codecov
