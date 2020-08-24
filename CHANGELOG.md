@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2020-08-24
+### Added
+- Test building container image
+- Test running container
+- Test running container web interface
+
+### Changed
+- Upgrade FastAPI from v0.60.1 to v0.60.2
+
 ## [0.5.1] - 2020-07-30
 ### Added
 - Sample Grafana graphs
