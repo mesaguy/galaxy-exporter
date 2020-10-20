@@ -29,7 +29,7 @@ script:
 
   - curl -L "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" -o hadolint
     && chmod 0750 hadolint
-    && ./hadolint --ignore=DL3018 Dockerfile
+    && ./hadolint --ignore=DL3013 --ignore=DL3018 Dockerfile
 
 after_success:
   - codecov
