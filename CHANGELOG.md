@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Switch to pipenv for dependency management
+- Update underlying software
+
 ## [0.6.0] - 2020-08-24
 ### Added
 - Test building container image

@@ -3,16 +3,17 @@ env:
   - HADOLINT_VERSION=1.18.0
 language: python
 python:
-  - "3.6"
-  - "3.7"
   - "3.8"
 
 services:
   - docker
 
 install:
+  # Install pipenv to manage dependencies
+  - pip install pipenv
+
   # Install Python software used for testing
-  - pip install -e ".[testing]"
+  - pipenv install --system --deploy
 
   # Install gems
   - bundle install
@@ -20,7 +21,7 @@ install:
 script:
   - awesome_bot --request-delay 1 --skip-save-results --allow-dupe --white-list=localhost --files $(ls *.md | paste -sd "," -)
 
-  - pytest --doctest-modules --pylint --pep8 --cov-report=term-missing --cov=galaxy_exporter tests galaxy_exporter
+  - pytest --doctest-modules --pylint --cov-report=term-missing --cov=galaxy_exporter tests galaxy_exporter
 
   - mypy galaxy_exporter/galaxy_exporter.py
 

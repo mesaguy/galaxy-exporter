@@ -3,4 +3,4 @@
 
 __myname__ = 'galaxy-exporter'
 __description__ = 'Prometheus exporter of Ansible Galaxy metrics'
-__version__ = '0.5.1'
+__version__ = '0.5.2'
