@@ -1,6 +1,6 @@
 ---
 env:
-  - HADOLINT_VERSION=1.18.0
+  - HADOLINT_VERSION=1.19.0
 language: python
 python:
   - "3.8"

@@ -10,12 +10,13 @@ COPY galaxy_exporter/ galaxy_exporter/
 
 # Install compiler, tools, and libraries temporarily while building FastAPI
 RUN apk add --no-cache file gcc libffi-dev make musl-dev openssl-dev && \
-    # Upgrade pip
-    python -m pip install --upgrade pip && \
     # Install pipenv
     pip install pipenv && \
     # Install 3rd party Python modules
-    pipenv install --system --deploy && \
+    pipenv lock -r > requirements.txt && \
+    pipenv lock --dev -r > dev-requirements.txt && \
+    pip uninstall --yes pipenv && \
+    pip install -r requirements.txt && \
     # Remove the unneeded compiler, tools, and libraries
     apk del file gcc libffi-dev make musl-dev openssl-dev
 
