@@ -5,31 +5,31 @@ verify_ssl = true
 
 [dev-packages]
 # Codecov
-coverage = ">=5.3,<6"
-codecov = ">=2.1.10<3"
+coverage = "*"
+codecov = "*"
 # Testing
-mypy  = ">=0.790,<1"
+mypy  = "*"
 pipenv-setup = "*"
-pylint = ">=2.6.0,<2.7"
-pytest = ">=6.1.1,<7"
-pytest-asyncio = ">= 0.14.0,<1"
-pytest-cov = ">=2.10.1,<3"
-pytest-pylint = ">=0.17.0"
-pytest_docker_tools = ">=1.0.0,<2"
-requests = ">=2.24.0,<3"
-testinfra = ">=5.3.1,<6"
+pylint = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pytest-cov = "*"
+pytest-pylint = "*"
+pytest_docker_tools = "*"
+requests = "*"
+testinfra = "*"
 
 [packages]
 # Improves aiohttp performance
-aiodns = "<3,>=2.0.0"
+aiodns = "*"
 # Facilitates API calls to Ansible Galaxy
-aiohttp = ">=3.6.2,<3.6.3"
-fastapi = ">=0.61.1,<1"
+aiohttp = "*"
+fastapi = "*"
 # For exporting Prometheus metrics
-prometheus-client = "<1,>=0.8.0"
-python-dateutil = ">=2.8.1"
-tenacity = ">=6.2.0,<7"
-uvicorn = ">=0.12.1,<1"
+prometheus-client = "*"
+python-dateutil = "*"
+tenacity = "*"
+uvicorn = "*"
 
 [requires]
 python_version = "3.8"

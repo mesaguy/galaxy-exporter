@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 2021-03-05
+### Changed
+- Update underlying software
+
+## [0.6.2] - 2021-01-07
+### Changed
+- Update underlying software
+
 ## [0.6.1] - 2020-10-20
 ### Changed
 - Switch to pipenv for dependency management
