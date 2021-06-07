@@ -27,7 +27,7 @@ setup(
         "prometheus-client==0.9.0",
         "pycares==3.1.1",
         "pycparser==2.20; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
-        "pydantic==1.8.1; python_full_version >= '3.6.1'",
+        "pydantic==1.8.2; python_full_version >= '3.6.1'",
         "python-dateutil==2.8.1",
         "six==1.15.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
         "starlette==0.13.6; python_version >= '3.6'",
