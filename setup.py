@@ -20,7 +20,7 @@ setup(
         "cffi==1.14.5",
         "chardet==3.0.4",
         "click==7.1.2; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
-        "fastapi==0.63.0",
+        "fastapi==0.65.2",
         "h11==0.12.0; python_version >= '3.6'",
         "idna==3.1; python_version >= '3.4'",
         "multidict==5.1.0; python_version >= '3.6'",
