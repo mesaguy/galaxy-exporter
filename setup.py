@@ -25,7 +25,7 @@ setup(
         "idna==3.1; python_version >= '3.4'",
         "multidict==5.1.0; python_version >= '3.6'",
         "prometheus-client==0.9.0",
-        "pycares==3.1.1",
+        "pycares==4.2.0",
         "pycparser==2.20; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
         "pydantic==1.8.1; python_full_version >= '3.6.1'",
         "python-dateutil==2.8.1",
